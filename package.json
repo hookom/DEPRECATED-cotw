@@ -1,9 +1,9 @@
 {
-  "name": "angular-seed",
+  "name": "climbontheway",
   "version": "0.0.0",
-  "description": "Modular starter project for Angular 2 (and beyond) with statically typed build and AoT compilation",
+  "description": "climbontheway.com in Angular2+ from angular-seed",
   "repository": {
-    "url": "https://github.com/mgechev/angular-seed"
+    "url": "https://github.com/hookom/climbontheway"
   },
   "scripts": {
     "build.dev": "gulp build.dev --color --env-config dev",
@@ -43,7 +43,7 @@
     "compodoc": "node_modules/.bin/compodoc -p src/client/tsconfig.json",
     "serve.compodoc": "node_modules/.bin/compodoc -s"
   },
-  "author": "Minko Gechev <mgechev>",
+  "author": "Isaac Hookom <hookom>",
   "license": "MIT",
   "devDependencies": {
     "@angular/compiler-cli": "^4.0.0",
