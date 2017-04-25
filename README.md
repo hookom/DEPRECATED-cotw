@@ -229,7 +229,7 @@ $ npm run serve.coverage
 # Make sure you do have Java in your PATH (required for webdriver)
 
 # npm install webdriver-manager <- Install this first for e2e testing
-# npm run webdriver-update <- You will need to run this the first time
+# npm run webdriver-update (node_modules/webdriver-manager/bin/webdriver-manager update) <- You will need to run this the first time
 $ npm run webdriver-start
 $ npm run serve.e2e
 $ npm run e2e
