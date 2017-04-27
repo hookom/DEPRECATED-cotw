@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import { AddComponent } from './add/add.component';
 import { ToolbarComponent } from './shared/toolbar/toolbar.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
+import { MapComponent } from './shared/map/map.component';
 
 export function main() {
 
@@ -31,6 +32,7 @@ export function main() {
         imports: [FormsModule, RouterTestingModule.withRoutes(config)],
         declarations: [TestComponent, ToolbarComponent,
           NavbarComponent, AppComponent,
+          MapComponent,
           HomeComponent, AddComponent],
         providers: [
           { provide: APP_BASE_HREF, useValue: '/' }
