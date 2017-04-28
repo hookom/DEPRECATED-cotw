@@ -11,6 +11,10 @@ declare var google: any;
 
 export class MapComponent implements OnInit {
 
+  from: string = '';
+  to: string = '';
+  distance: number = 0;
+
   ngOnInit() {
     var directionsService = new google.maps.DirectionsService;
     var directionsDisplay = new google.maps.DirectionsRenderer;
@@ -19,10 +23,18 @@ export class MapComponent implements OnInit {
          center: {lat: 41.85, lng: -87.65}
     });
     directionsDisplay.setMap(map);
+    
+
+  }
+
+  /**
+   * Creates route on the map with given inputs.
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  climbRoute(): boolean {
     calculateAndDisplayRoute(directionsService, directionsDisplay);
 
     function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-
       var waypts = [];
       var checkboxArray:any[] = [
           'winnipeg', 'regina','calgary'
@@ -49,8 +61,13 @@ export class MapComponent implements OnInit {
           window.alert('Directions request failed due to ' + status);
         }
       });
-
     }
+
+    this.from = '';
+    this.to = '';
+    this.distance = 0;
+    
+    return false;
   }
 
 }

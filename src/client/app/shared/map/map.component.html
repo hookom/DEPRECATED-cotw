@@ -1,1 +1,23 @@
-<div id="map"></div>
+<div>
+    <h2 class="title">Welcome!  Work is still underway, so please excuse any technical difficulties.</h2>
+
+    <p>This tool will allow you to locate climbing areas situated along your route.</p>
+    <p>To begin, enter your starting place and destination in the boxes below.</p>
+    <p>Drag the route line to adjust/create waypoints and click "Route" again to re-search.</p>
+
+    <!--<div id="mapControlInputs">
+        From <input type="text" id="from" value=""/>
+        To <input type="text" id="to" value=""/>
+        I'm willing to go <input type="text" id="distance" value="" size="2"> miles out of my way to climb!
+        <input type="submit" onclick="climbRoute()" value="Route"/>
+    </div>-->
+
+    <form (submit)="climbRoute()">
+        <input [(ngModel)]="to" name="to" placeholder="asdf">
+        <input [(ngModel)]="from" name="from" placeholder="asdf">
+        <input [(ngModel)]="distance" name="distance" placeholder="100">
+        <button type="submit">Route</button>
+    </form>
+
+    <div id="map" style="width: 800px; height: 600px;"></div>
+</div>
