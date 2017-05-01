@@ -51,6 +51,7 @@
     "@types/async": "^2.0.32",
     "@types/browser-sync": "^0.0.34",
     "@types/express": "^4.0.33",
+    "@types/googlemaps": "^3.26.10",
     "@types/gulp": "^3.8.32",
     "@types/gulp-filter": "^3.0.29",
     "@types/gulp-load-plugins": "^0.0.28",
@@ -133,6 +134,7 @@
     "yargs": "^6.0.0"
   },
   "dependencies": {
+    "@agm/core": "^1.0.0-beta.0",
     "@angular/animations": "^4.0.0",
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",

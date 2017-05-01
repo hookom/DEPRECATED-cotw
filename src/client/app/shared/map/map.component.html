@@ -12,12 +12,21 @@
         <input type="submit" onclick="climbRoute()" value="Route"/>
     </div>-->
 
-    <form (submit)="climbRoute()">
+    <!--<form (submit)="climbRoute()">
         <input [(ngModel)]="to" name="to" placeholder="asdf">
         <input [(ngModel)]="from" name="from" placeholder="asdf">
         <input [(ngModel)]="distance" name="distance" placeholder="100">
         <button type="submit">Route</button>
-    </form>
+    </form>-->
 
-    <div id="map" style="width: 800px; height: 600px;"></div>
+    <!--<div id="map" style="width: 800px; height: 600px;"></div>-->
+
+    <div class="container">
+      <div class="form-group">
+        <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
+      </div>
+      <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
+        <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+      </agm-map>
+    </div>
 </div>
