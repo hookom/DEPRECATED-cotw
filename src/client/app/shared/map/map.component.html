@@ -1,32 +1,27 @@
-<div>
-    <h2 class="title">Welcome!  Work is still underway, so please excuse any technical difficulties.</h2>
+<!--<div id="mapControlInputs">
+    From <input type="text" id="from" value=""/>
+    To <input type="text" id="to" value=""/>
+    I'm willing to go <input type="text" id="distance" value="" size="2"> miles out of my way to climb!
+    <input type="submit" onclick="climbRoute()" value="Route"/>
+</div>-->
 
-    <p>This tool will allow you to locate climbing areas situated along your route.</p>
-    <p>To begin, enter your starting place and destination in the boxes below.</p>
-    <p>Drag the route line to adjust/create waypoints and click "Route" again to re-search.</p>
+<!--<form (submit)="climbRoute()">
+    <input [(ngModel)]="to" name="to" placeholder="asdf">
+    <input [(ngModel)]="from" name="from" placeholder="asdf">
+    <input [(ngModel)]="distance" name="distance" placeholder="100">
+    <button type="submit">Route</button>
+</form>-->
 
-    <!--<div id="mapControlInputs">
-        From <input type="text" id="from" value=""/>
-        To <input type="text" id="to" value=""/>
-        I'm willing to go <input type="text" id="distance" value="" size="2"> miles out of my way to climb!
-        <input type="submit" onclick="climbRoute()" value="Route"/>
-    </div>-->
+<!--<div id="map" style="width: 800px; height: 600px;"></div>-->
 
-    <!--<form (submit)="climbRoute()">
-        <input [(ngModel)]="to" name="to" placeholder="asdf">
-        <input [(ngModel)]="from" name="from" placeholder="asdf">
-        <input [(ngModel)]="distance" name="distance" placeholder="100">
-        <button type="submit">Route</button>
-    </form>-->
-
-    <!--<div id="map" style="width: 800px; height: 600px;"></div>-->
-
-    <div class="container">
-      <div class="form-group">
-        <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
-      </div>
-      <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
-        <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
-      </agm-map>
-    </div>
+<div class="container">
+  <div class="form-group">
+    <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #originSearch [formControl]="originSearchControl">
+    <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #destSearch [formControl]="destSearchControl">
+  </div>
+  <agm-map [latitude]="originLatitude" [longitude]="originLongitude" [scrollwheel]="false" [zoom]="zoom">
+    <agm-marker [latitude]="originLatitude" [longitude]="originLongitude"></agm-marker>
+    <agm-marker [latitude]="destLatitude" [longitude]="destLongitude"></agm-marker>
+    <sebm-google-map-directions [origin]=”origin” [destination]=”destination”></sebm-google-map-directions>
+  </agm-map>
 </div>

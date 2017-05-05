@@ -8,6 +8,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { MapComponent } from './map/map.component';
 import { NameListService } from './name-list/name-list.service';
 import { AgmCoreModule } from '@agm/core';
+import { DirectionsMapDirective } from './map/directions.directive';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -21,7 +22,7 @@ import { AgmCoreModule } from '@agm/core';
             }),
             BrowserModule, FormsModule,
             ReactiveFormsModule],
-  declarations: [ToolbarComponent, NavbarComponent, MapComponent],
+  declarations: [ToolbarComponent, NavbarComponent, MapComponent, DirectionsMapDirective],
   exports: [ToolbarComponent, NavbarComponent, MapComponent,
     CommonModule, FormsModule, RouterModule]
 })

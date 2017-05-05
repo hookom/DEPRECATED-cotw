@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, NgZone, ViewChild } from '@angular/core'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { MapsAPILoader } from '@agm/core';
+import { DirectionsMapDirective } from './directions.directive';
 
 declare var google: any;
 
@@ -14,13 +15,22 @@ declare var google: any;
 
 export class MapComponent implements OnInit {
 
-  public latitude: number;
-  public longitude: number;
-  public searchControl: FormControl;
   public zoom: number;
+  public originLatitude: number;
+  public originLongitude: number;
+  public originSearchControl: FormControl;
+  public destLatitude: number;
+  public destLongitude: number;
+  public destSearchControl: FormControl;
 
-  @ViewChild("search")
-  public searchElementRef: ElementRef;
+  @ViewChild("originSearch")
+  public originSearchElementRef: ElementRef;
+
+  @ViewChild("destSearch")
+  public destSearchElementRef: ElementRef;
+
+  @ViewChild(DirectionsMapDirective)
+  vc: DirectionsMapDirective;
 
   constructor(
     private mapsAPILoader: MapsAPILoader,
@@ -30,34 +40,69 @@ export class MapComponent implements OnInit {
   ngOnInit() {
     //set google maps defaults
     this.zoom = 4;
-    this.latitude = 39.8282;
-    this.longitude = -98.5795;
+    this.originLatitude = 39.8282;
+    this.originLongitude = -98.5795;
 
-    //create search FormControl
-    this.searchControl = new FormControl();
+    //create search FormControls
+    this.originSearchControl = new FormControl();
+    this.destSearchControl = new FormControl();
 
     //set current position
     this.setCurrentPosition();
 
     //load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
-      let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+      let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
       });
-      autocomplete.addListener("place_changed", () => {
+      let destAutocomplete = new google.maps.places.Autocomplete(this.destSearchElementRef.nativeElement, {
+        types: []
+      });
+      originAutocomplete.addListener("place_changed", () => {
         this.ngZone.run(() => {
           //get the place result
-          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          let place: google.maps.places.PlaceResult = originAutocomplete.getPlace();
 
           //verify result
           if (place.geometry === undefined || place.geometry === null) {
             return;
           }
 
-          //set latitude, longitude and zoom
-          this.latitude = place.geometry.location.lat();
-          this.longitude = place.geometry.location.lng();
-          this.zoom = 12;
+          //set latitude, longitude
+          this.originLatitude = place.geometry.location.lat();
+          this.originLongitude = place.geometry.location.lng();
+        });
+      });
+      destAutocomplete.addListener("place_changed", () => {
+        this.ngZone.run(() => {
+          //get the place result
+          let place: google.maps.places.PlaceResult = destAutocomplete.getPlace();
+
+          //verify result
+          if (place.geometry === undefined || place.geometry === null) {
+            return;
+          }
+
+          //set latitude, longitude, and zoom
+          this.destLatitude = place.geometry.location.lat();
+          this.destLongitude = place.geometry.location.lng();
+
+          //TODO: reset zoom to include both origin and dest markers
+          this.zoom = 8;
+
+          this.vc.destination = {
+            longitude: place.geometry.location.lng(),
+            latitude: place.geometry.location.lat()
+          };
+          this.vc.destinationPlaceId = place.place_id;
+
+          if(this.vc.directionsDisplay === undefined) {
+            this.mapsAPILoader.load()
+              .then(() => { 
+                this.vc.directionsDisplay = new google.maps.DirectionsRenderer;
+              });
+          }
+
         });
       });
     });
@@ -66,9 +111,9 @@ export class MapComponent implements OnInit {
   private setCurrentPosition() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
-        this.zoom = 12;
+        this.originLatitude = position.coords.latitude;
+        this.originLongitude = position.coords.longitude;
+        this.zoom = 9;
       });
     }
   }
