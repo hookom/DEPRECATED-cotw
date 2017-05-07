@@ -1,23 +1,8 @@
-<!--<div id="mapControlInputs">
-    From <input type="text" id="from" value=""/>
-    To <input type="text" id="to" value=""/>
-    I'm willing to go <input type="text" id="distance" value="" size="2"> miles out of my way to climb!
-    <input type="submit" onclick="climbRoute()" value="Route"/>
-</div>-->
-
-<!--<form (submit)="climbRoute()">
-    <input [(ngModel)]="to" name="to" placeholder="asdf">
-    <input [(ngModel)]="from" name="from" placeholder="asdf">
-    <input [(ngModel)]="distance" name="distance" placeholder="100">
-    <button type="submit">Route</button>
-</form>-->
-
-<!--<div id="map" style="width: 800px; height: 600px;"></div>-->
-
 <div class="container">
   <div class="form-group">
     <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #originSearch [formControl]="originSearchControl">
     <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #destSearch [formControl]="destSearchControl">
+    <input placeholder="distance out of way" type="number" class="form-control" #detourDist [formControl]="detourControl">
   </div>
   <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
     <sebm-google-map-directions [origin]="origin" [destination]="destination"></sebm-google-map-directions>

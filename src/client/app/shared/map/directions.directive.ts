@@ -46,12 +46,10 @@ export class DirectionsMapDirective {
             destination: {placeId : this.destinationPlaceId },
             avoidHighways: true,
             travelMode: google.maps.DirectionsTravelMode.DRIVING
-            //travelMode: 'DRIVING'
         }, function(response: any, status: any) {
             if (status === 'OK') {
                 me.directionsDisplay.setDirections(response);
                 map.setZoom(30);
-                //console.log(me.getcomputeDistance (latLngA, latLngB));
                 var point = response.routes[ 0 ].legs[ 0 ];
                 me.estimatedTime = point.duration.text ;
                 me.estimatedDistance = point.distance.text;

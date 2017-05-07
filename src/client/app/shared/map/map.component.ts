@@ -21,6 +21,7 @@ export class MapComponent implements OnInit {
   public zoom: number;
   public originSearchControl: FormControl;
   public destSearchControl: FormControl;
+  public detourControl: FormControl;
 
   @ViewChild("originSearch")
   public originSearchElementRef: ElementRef;
@@ -28,8 +29,11 @@ export class MapComponent implements OnInit {
   @ViewChild("destSearch")
   public destSearchElementRef: ElementRef;
 
+  @ViewChild("detourDist")
+  public detourDistElementRef: ElementRef;
+
   @ViewChild(DirectionsMapDirective)
-  vc: DirectionsMapDirective;
+  directions: DirectionsMapDirective;
 
   public origin: any;
   public destination: any;
@@ -50,6 +54,7 @@ export class MapComponent implements OnInit {
     //create search FormControls
     this.originSearchControl = new FormControl();
     this.destSearchControl = new FormControl();
+    this.detourControl = new FormControl();
 
     //set current position
     this.setCurrentPosition();
@@ -66,6 +71,9 @@ export class MapComponent implements OnInit {
       this.setupPlaceChangedListener(originAutocomplete, 'ORG');
       this.setupPlaceChangedListener(destAutocomplete, 'DES');
     });
+
+    //detect changes to detourDistance to trigger routeboxing unless there's no mapped route
+
   }
 
   private setCurrentPosition() {
@@ -88,85 +96,26 @@ export class MapComponent implements OnInit {
             return;
           }
           if (mode === 'ORG') {
-            this.vc.origin = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; 
-            this.vc.originPlaceId = place.place_id;
+            this.directions.origin = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; 
+            this.directions.originPlaceId = place.place_id;
           } else {
-            this.vc.destination = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; // its a example aleatory position
-            this.vc.destinationPlaceId = place.place_id;
+            this.directions.destination = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; // its a example aleatory position
+            this.directions.destinationPlaceId = place.place_id;
           }
 
-          if(this.vc.directionsDisplay === undefined) {
+          if(this.directions.directionsDisplay === undefined) {
             this.mapsAPILoader.load()
               .then(() => { 
-                this.vc.directionsDisplay = new google.maps.DirectionsRenderer;
+                this.directions.directionsDisplay = new google.maps.DirectionsRenderer;
               }); 
           }
 
           //Update the directions
-          this.vc.updateDirections();
+          this.directions.updateDirections();
           this.zoom = 12;
         });
 
       });
     }
-
-  // from: string = '';
-  // to: string = '';
-  // distance: number = 0;
-
-  // ngOnInit() {
-  //   var directionsService = new google.maps.DirectionsService;
-  //   var directionsDisplay = new google.maps.DirectionsRenderer;
-  //   var map = new google.maps.Map(document.getElementById('cotw-map'), {
-  //        zoom: 7,
-  //        center: {lat: 41.85, lng: -87.65}
-  //   });
-  //   directionsDisplay.setMap(map);
-    
-
-  // }
-
-  // /**
-  //  * Creates route on the map with given inputs.
-  //  * @return {boolean} false to prevent default form submit behavior to refresh the page.
-  //  */
-  // climbRoute(): boolean {
-  //   calculateAndDisplayRoute(directionsService, directionsDisplay);
-
-  //   function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-  //     var waypts = [];
-  //     var checkboxArray:any[] = [
-  //         'winnipeg', 'regina','calgary'
-  //     ];
-  //     for (var i = 0; i < checkboxArray.length; i++) {
-
-  //       waypts.push({
-  //         location: checkboxArray[i],
-  //         stopover: true
-  //       });
-
-  //     }
-
-  //     directionsService.route({
-  //       origin: {lat: 41.85, lng: -87.65},
-  //       destination: {lat: 49.3, lng: -123.12},
-  //       waypoints: waypts,
-  //       optimizeWaypoints: true,
-  //       travelMode: 'DRIVING'
-  //     }, function(response, status) {
-  //       if (status === 'OK') {
-  //         directionsDisplay.setDirections(response);
-  //       } else {
-  //         window.alert('Directions request failed due to ' + status);
-  //       }
-  //     });
-  //   }
-
-  //   this.from = '';
-  //   this.to = '';
-  //   this.distance = 0;
-    
-  //   return false;
-  // }
 
 }
