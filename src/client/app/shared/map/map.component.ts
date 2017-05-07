@@ -1,7 +1,7 @@
-import { Component, OnInit, ElementRef, NgZone, ViewChild } from '@angular/core'
+import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, Input } from '@angular/core'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { MapsAPILoader } from '@agm/core';
+import { MapsAPILoader, AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { DirectionsMapDirective } from './directions.directive';
 
 declare var google: any;
@@ -11,16 +11,15 @@ declare var google: any;
     selector: 'cotw-map',
     templateUrl: 'map.component.html',
     styleUrls: ['map.component.css'],
+    providers: [GoogleMapsAPIWrapper]
 }) 
 
 export class MapComponent implements OnInit {
 
+  public latitude: number;
+  public longitude: number;
   public zoom: number;
-  public originLatitude: number;
-  public originLongitude: number;
   public originSearchControl: FormControl;
-  public destLatitude: number;
-  public destLongitude: number;
   public destSearchControl: FormControl;
 
   @ViewChild("originSearch")
@@ -32,16 +31,21 @@ export class MapComponent implements OnInit {
   @ViewChild(DirectionsMapDirective)
   vc: DirectionsMapDirective;
 
+  public origin: any;
+  public destination: any;
+
   constructor(
     private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private gmapsApi: GoogleMapsAPIWrapper,
+    private _elementRef : ElementRef
   ) {}
 
   ngOnInit() {
     //set google maps defaults
     this.zoom = 4;
-    this.originLatitude = 39.8282;
-    this.originLongitude = -98.5795;
+    this.latitude = 39.8282;
+    this.longitude = -98.5795;
 
     //create search FormControls
     this.originSearchControl = new FormControl();
@@ -58,65 +62,53 @@ export class MapComponent implements OnInit {
       let destAutocomplete = new google.maps.places.Autocomplete(this.destSearchElementRef.nativeElement, {
         types: []
       });
-      originAutocomplete.addListener("place_changed", () => {
-        this.ngZone.run(() => {
-          //get the place result
-          let place: google.maps.places.PlaceResult = originAutocomplete.getPlace();
 
-          //verify result
-          if (place.geometry === undefined || place.geometry === null) {
-            return;
-          }
-
-          //set latitude, longitude
-          this.originLatitude = place.geometry.location.lat();
-          this.originLongitude = place.geometry.location.lng();
-        });
-      });
-      destAutocomplete.addListener("place_changed", () => {
-        this.ngZone.run(() => {
-          //get the place result
-          let place: google.maps.places.PlaceResult = destAutocomplete.getPlace();
-
-          //verify result
-          if (place.geometry === undefined || place.geometry === null) {
-            return;
-          }
-
-          //set latitude, longitude, and zoom
-          this.destLatitude = place.geometry.location.lat();
-          this.destLongitude = place.geometry.location.lng();
-
-          //TODO: reset zoom to include both origin and dest markers
-          this.zoom = 8;
-
-          this.vc.destination = {
-            longitude: place.geometry.location.lng(),
-            latitude: place.geometry.location.lat()
-          };
-          this.vc.destinationPlaceId = place.place_id;
-
-          if(this.vc.directionsDisplay === undefined) {
-            this.mapsAPILoader.load()
-              .then(() => { 
-                this.vc.directionsDisplay = new google.maps.DirectionsRenderer;
-              });
-          }
-
-        });
-      });
+      this.setupPlaceChangedListener(originAutocomplete, 'ORG');
+      this.setupPlaceChangedListener(destAutocomplete, 'DES');
     });
   }
 
   private setCurrentPosition() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
-        this.originLatitude = position.coords.latitude;
-        this.originLongitude = position.coords.longitude;
-        this.zoom = 9;
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+        this.zoom = 12;
       });
     }
   }
+
+  private setupPlaceChangedListener(autocomplete: any, mode: any ) {
+    autocomplete.addListener("place_changed", () => {
+        this.ngZone.run(() => {
+          //get the place result
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          //verify result
+          if (place.geometry === undefined) {
+            return;
+          }
+          if (mode === 'ORG') {
+            this.vc.origin = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; 
+            this.vc.originPlaceId = place.place_id;
+          } else {
+            this.vc.destination = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; // its a example aleatory position
+            this.vc.destinationPlaceId = place.place_id;
+          }
+
+          if(this.vc.directionsDisplay === undefined) {
+            this.mapsAPILoader.load()
+              .then(() => { 
+                this.vc.directionsDisplay = new google.maps.DirectionsRenderer;
+              }); 
+          }
+
+          //Update the directions
+          this.vc.updateDirections();
+          this.zoom = 12;
+        });
+
+      });
+    }
 
   // from: string = '';
   // to: string = '';

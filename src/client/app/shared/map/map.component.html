@@ -19,9 +19,7 @@
     <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #originSearch [formControl]="originSearchControl">
     <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #destSearch [formControl]="destSearchControl">
   </div>
-  <agm-map [latitude]="originLatitude" [longitude]="originLongitude" [scrollwheel]="false" [zoom]="zoom">
-    <agm-marker [latitude]="originLatitude" [longitude]="originLongitude"></agm-marker>
-    <agm-marker [latitude]="destLatitude" [longitude]="destLongitude"></agm-marker>
-    <sebm-google-map-directions [origin]=”origin” [destination]=”destination”></sebm-google-map-directions>
+  <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
+    <sebm-google-map-directions [origin]="origin" [destination]="destination"></sebm-google-map-directions>
   </agm-map>
 </div>
