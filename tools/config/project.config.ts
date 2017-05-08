@@ -13,7 +13,7 @@ export class ProjectConfig extends SeedConfig {
 
   constructor() {
     super();
-    // this.APP_TITLE = 'Put name of your app here';
+    this.APP_TITLE = 'Climb on the Way';
     // this.GOOGLE_ANALYTICS_ID = 'Your site's ID';
 
     /* Enable typeless compiler runs (faster) between typed compiler runs. */
@@ -30,6 +30,7 @@ export class ProjectConfig extends SeedConfig {
     this.APP_ASSETS = [
       // {src: `${this.APP_SRC}/your-path-to-lib/libs/jquery-ui.js`, inject: true, vendor: false}
       // {src: `${this.CSS_SRC}/path-to-lib/test-lib.css`, inject: true, vendor: false},
+      // {src: `${this.CSS_SRC}/client/assets/RouteBoxer.js`, inject: true, vendor: false},
     ];
 
     this.ROLLUP_INCLUDE_DIR = [
@@ -43,11 +44,11 @@ export class ProjectConfig extends SeedConfig {
     ];
 
     // Add packages (e.g. ng2-translate)
-    let additionalPackages: ExtendPackages[] = [{
-      name: '@agm/core',
-      // Path to the package's bundle
-      path: 'node_modules/@agm/core/core.umd.js'
-    }];
+    let additionalPackages: ExtendPackages[] = [
+      { name: '@agm/core',
+        path: 'node_modules/@agm/core/core.umd.js'
+      },
+    ];
     
     this.addPackagesBundles(additionalPackages);
 

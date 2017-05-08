@@ -144,7 +144,7 @@ export class SeedConfig {
    * `index.html`.
    * @type {string}
    */
-  APP_TITLE = 'Climb on the Way';
+  APP_TITLE = 'Welcome to angular-seed!';
 
   /**
    * Tracking ID.

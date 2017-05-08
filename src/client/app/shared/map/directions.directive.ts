@@ -2,6 +2,7 @@ import { Directive,  Input, Output } from '@angular/core';
 import { GoogleMapsAPIWrapper }  from '@agm/core';
  
 declare var google: any;
+declare var RouteBoxer: any;
 
 @Directive({
   selector: 'sebm-google-map-directions'
@@ -56,6 +57,15 @@ export class DirectionsMapDirective {
                 console.log(me.estimatedTime);
                 console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
 
+                this.routeBoxer = new RouteBoxer();
+                // clearBoxes();
+                // clearMarkers();
+
+                // var path = result.routes[0].overview_path;
+                // var boxes = routeBoxer.box(path, distance);
+
+                // drawBoxes(boxes);
+                // findMarkers(boxes);
             } else {
                 console.log('Directions request failed due to ' + status);
             }
@@ -63,8 +73,20 @@ export class DirectionsMapDirective {
     });
   }
 
-  private getcomputeDistance(latLngA: any , latLngB: any ) 
-  {
-    return (google.maps.geometry.spherical.computeDistanceBetween(latLngA, latLngB) / 1000).toFixed(2);
-  }
+  // private clearBoxes() {
+  //   if (boxpolys != null) {
+  //     for (var i = 0; i < boxpolys.length; i++) {
+  //       boxpolys[i].setMap(null);
+  //     }
+  //   }
+  //   boxpolys = null;
+  // }
+
+  // private clearMarkers() {
+  //   for (var i=0; i < foundLocationMarkers.length; i++) {
+  //     foundLocationMarkers[i].setMap(null);
+  //     foundLocationMarkers.pop(foundLocationMarkers[i]);
+  //   }
+  // }
+
 }
