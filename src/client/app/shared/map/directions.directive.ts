@@ -18,7 +18,9 @@ export class DirectionsMapDirective {
   @Input() estimatedDistance: any;
  
   constructor (
-    private gmapsApi: GoogleMapsAPIWrapper
+    private gmapsApi: GoogleMapsAPIWrapper,
+    private foundLocationMarkers: google.maps.Marker[],
+    private boxpolys: google.maps.Rectangle[]
   ) {}
 
   updateDirections() {
@@ -73,20 +75,20 @@ export class DirectionsMapDirective {
     });
   }
 
-  // private clearBoxes() {
-  //   if (boxpolys != null) {
-  //     for (var i = 0; i < boxpolys.length; i++) {
-  //       boxpolys[i].setMap(null);
-  //     }
-  //   }
-  //   boxpolys = null;
-  // }
+  private clearBoxes() {
+    if (this.boxpolys != null) {
+      for (var i = 0; i < this.boxpolys.length; i++) {
+        this.boxpolys[i].setMap(null);
+      }
+    }
+    this.boxpolys = null;
+  }
 
-  // private clearMarkers() {
-  //   for (var i=0; i < foundLocationMarkers.length; i++) {
-  //     foundLocationMarkers[i].setMap(null);
-  //     foundLocationMarkers.pop(foundLocationMarkers[i]);
-  //   }
-  // }
+  private clearMarkers() {
+    for (var i=0; i < this.foundLocationMarkers.length; i++) {
+      this.foundLocationMarkers[i].setMap(null);
+      this.foundLocationMarkers.pop(this.foundLocationMarkers[i]);
+    }
+  }
 
 }
