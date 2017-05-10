@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, Input } from '@angular/core'
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { MapsAPILoader, AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { DirectionsMapDirective } from './directions.directive';
@@ -19,9 +19,7 @@ export class MapComponent implements OnInit {
   public latitude: number;
   public longitude: number;
   public zoom: number;
-  public originSearchControl: FormControl;
-  public destSearchControl: FormControl;
-  public detourControl: FormControl;
+  public climbSearch: FormGroup;
 
   @ViewChild("originSearch")
   public originSearchElementRef: ElementRef;
@@ -29,11 +27,8 @@ export class MapComponent implements OnInit {
   @ViewChild("destSearch")
   public destSearchElementRef: ElementRef;
 
-  @ViewChild("detourDist")
-  public detourDistElementRef: ElementRef;
-
   @ViewChild(DirectionsMapDirective)
-  directions: DirectionsMapDirective;
+  public directions: DirectionsMapDirective;
 
   public origin: any;
   public destination: any;
@@ -41,8 +36,7 @@ export class MapComponent implements OnInit {
   constructor(
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone,
-    private gmapsApi: GoogleMapsAPIWrapper,
-    private _elementRef : ElementRef
+    private gmapsApi: GoogleMapsAPIWrapper
   ) {}
 
   ngOnInit() {
@@ -51,10 +45,12 @@ export class MapComponent implements OnInit {
     this.latitude = 39.8282;
     this.longitude = -98.5795;
 
-    //create search FormControls
-    this.originSearchControl = new FormControl();
-    this.destSearchControl = new FormControl();
-    this.detourControl = new FormControl();
+    //create search FormGroup
+    this.climbSearch = new FormGroup({
+      originSearchControl: new FormControl('', Validators.required),
+      destSearchControl: new FormControl('', Validators.required),
+      distanceControl: new FormControl('', Validators.required)
+    });
 
     //set current position
     this.setCurrentPosition();
@@ -70,11 +66,7 @@ export class MapComponent implements OnInit {
 
       this.setupPlaceChangedListener(originAutocomplete, 'ORG');
       this.setupPlaceChangedListener(destAutocomplete, 'DES');
-      // this.setupDistanceChangedListener();
     });
-
-    //detect changes to detourDistance to trigger routeboxing unless there's no mapped route
-
   }
 
   private setCurrentPosition() {
@@ -117,5 +109,10 @@ export class MapComponent implements OnInit {
         });
 
       });
+    }
+
+    onSubmit({ formVals, valid }: { formVals: any, valid: boolean }) {
+      console.log(formVals, valid);
+      this.directions.findCrags(formVals.distanceControl.value);
     }
 }

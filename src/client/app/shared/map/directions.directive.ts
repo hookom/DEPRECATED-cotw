@@ -16,11 +16,12 @@ export class DirectionsMapDirective {
   @Input() directionsDisplay: any;
   @Input() estimatedTime: any;
   @Input() estimatedDistance: any;
+  @Input() currentRoute: any;
  
   constructor (
     private gmapsApi: GoogleMapsAPIWrapper,
-    // private foundLocationMarkers: google.maps.Marker[],
-    // private boxpolys: google.maps.Rectangle[]
+    private foundLocationMarkers: google.maps.Marker[],
+    private boxpolys: google.maps.Rectangle[]
   ) {}
 
   updateDirections() {
@@ -51,6 +52,7 @@ export class DirectionsMapDirective {
             travelMode: google.maps.DirectionsTravelMode.DRIVING
         }, function(response: any, status: any) {
             if (status === 'OK') {
+                // this.currentRoute = response.routes[0];
                 me.directionsDisplay.setDirections(response);
                 map.setZoom(30);
                 var point = response.routes[ 0 ].legs[ 0 ];
@@ -58,16 +60,6 @@ export class DirectionsMapDirective {
                 me.estimatedDistance = point.distance.text;
                 console.log(me.estimatedTime);
                 console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
-
-                this.routeBoxer = new RouteBoxer();
-                // this.clearBoxes();
-                // this.clearMarkers();
-
-                // var path = response.routes[0].overview_path;
-                // var boxes = routeBoxer.box(path, distance);
-
-                // drawBoxes(boxes);
-                // findMarkers(boxes);
             } else {
                 console.log('Directions request failed due to ' + status);
             }
@@ -75,20 +67,37 @@ export class DirectionsMapDirective {
     });
   }
 
-  // private clearBoxes() {
-  //   if (this.boxpolys != null) {
-  //     for (var i = 0; i < this.boxpolys.length; i++) {
-  //       this.boxpolys[i].setMap(null);
-  //     }
-  //   }
-  //   this.boxpolys = null;
-  // }
+  findCrags(dist: number) {
+    var routeBoxer = new RouteBoxer();
+    this.clearBoxes();
+    this.clearMarkers();
 
-  // private clearMarkers() {
-  //   for (var i = this.foundLocationMarkers.length - 1; i >= 0; i--) {
-  //     this.foundLocationMarkers[i].setMap(null);
-  //     this.foundLocationMarkers.pop();
-  //   }
-  // }
+    // Convert the distance to box around the route from miles to km
+    //var distance = parseFloat(document.getElementById("distance").value) * 1.609344;
+
+    if(this.currentRoute != null) {
+        var path = this.currentRoute.overview_path;
+        var boxes = routeBoxer.box(path, dist);
+    }
+
+    // drawBoxes(boxes);
+    // findMarkers(boxes);
+  }
+
+  private clearBoxes() {
+    if (this.boxpolys != null) {
+      for (var i = 0; i < this.boxpolys.length; i++) {
+        this.boxpolys[i].setMap(null);
+      }
+    }
+    this.boxpolys = null;
+  }
+
+  private clearMarkers() {
+    for (var i = this.foundLocationMarkers.length - 1; i >= 0; i--) {
+      this.foundLocationMarkers[i].setMap(null);
+      this.foundLocationMarkers.pop();
+    }
+  }
 
 }
