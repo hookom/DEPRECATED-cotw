@@ -19,8 +19,8 @@ export class DirectionsMapDirective {
  
   constructor (
     private gmapsApi: GoogleMapsAPIWrapper,
-    private foundLocationMarkers: google.maps.Marker[],
-    private boxpolys: google.maps.Rectangle[]
+    // private foundLocationMarkers: google.maps.Marker[],
+    // private boxpolys: google.maps.Rectangle[]
   ) {}
 
   updateDirections() {
@@ -60,10 +60,10 @@ export class DirectionsMapDirective {
                 console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
 
                 this.routeBoxer = new RouteBoxer();
-                // clearBoxes();
-                // clearMarkers();
+                // this.clearBoxes();
+                // this.clearMarkers();
 
-                // var path = result.routes[0].overview_path;
+                // var path = response.routes[0].overview_path;
                 // var boxes = routeBoxer.box(path, distance);
 
                 // drawBoxes(boxes);
@@ -75,20 +75,20 @@ export class DirectionsMapDirective {
     });
   }
 
-  private clearBoxes() {
-    if (this.boxpolys != null) {
-      for (var i = 0; i < this.boxpolys.length; i++) {
-        this.boxpolys[i].setMap(null);
-      }
-    }
-    this.boxpolys = null;
-  }
+  // private clearBoxes() {
+  //   if (this.boxpolys != null) {
+  //     for (var i = 0; i < this.boxpolys.length; i++) {
+  //       this.boxpolys[i].setMap(null);
+  //     }
+  //   }
+  //   this.boxpolys = null;
+  // }
 
-  private clearMarkers() {
-    for (var i=0; i < this.foundLocationMarkers.length; i++) {
-      this.foundLocationMarkers[i].setMap(null);
-      this.foundLocationMarkers.pop(this.foundLocationMarkers[i]);
-    }
-  }
+  // private clearMarkers() {
+  //   for (var i = this.foundLocationMarkers.length - 1; i >= 0; i--) {
+  //     this.foundLocationMarkers[i].setMap(null);
+  //     this.foundLocationMarkers.pop();
+  //   }
+  // }
 
 }

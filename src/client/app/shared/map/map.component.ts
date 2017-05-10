@@ -70,6 +70,7 @@ export class MapComponent implements OnInit {
 
       this.setupPlaceChangedListener(originAutocomplete, 'ORG');
       this.setupPlaceChangedListener(destAutocomplete, 'DES');
+      // this.setupDistanceChangedListener();
     });
 
     //detect changes to detourDistance to trigger routeboxing unless there's no mapped route
@@ -117,5 +118,4 @@ export class MapComponent implements OnInit {
 
       });
     }
-
 }
