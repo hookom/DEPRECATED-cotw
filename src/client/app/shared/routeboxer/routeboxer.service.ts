@@ -50,19 +50,20 @@ export class RouteBoxerService {
         if (path instanceof Array) {
             // already an arry of LatLngs (eg. v3 overview_path)
             vertices = path;
-        } else if (path instanceof google.maps.Polyline) {
+        }
+        else if (path instanceof google.maps.Polyline) {
             if (path.getPath) {
-            // v3 Maps API Polyline object
-            vertices = new Array(path.getPath().getLength());
-            for (var i = 0; i < vertices.length; i++) {
-                vertices[i] = path.getPath().getAt(i);
-            }
+                // v3 Maps API Polyline object
+                vertices = new Array(path.getPath().getLength());
+                for (let i = 0; i < vertices.length; i++) {
+                    vertices[i] = path.getPath().getAt(i);
+                }
             } else {
-            // v2 Maps API Polyline object
-            vertices = new Array(path.getVertexCount());
-            for (var j = 0; j < vertices.length; j++) {
-                vertices[j] = path.getVertex(j);
-            }
+                // v2 Maps API Polyline object
+                vertices = new Array(path.getVertexCount());
+                for (let j = 0; j < vertices.length; j++) {
+                    vertices[j] = path.getVertex(j);
+                }
             }
         }
 
@@ -80,101 +81,101 @@ export class RouteBoxerService {
         return (this.boxesX_.length <= this.boxesY_.length ?
                 this.boxesX_ :
                 this.boxesY_);
-    };
+    }
 
     /**
      * Generates boxes for a given route and distance
      *
-     * @param {LatLng[]} vertices The vertices of the path over which to lay the grid
+     * @param {google.maps.LatLng[]} vertices The vertices of the path over which to lay the grid
      * @param {Number} range The spacing of the grid cells.
      */
-    RouteBoxer.prototype.buildGrid_ = function (vertices, range) {
+    buildGrid_(vertices: google.maps.LatLng[], range: number): void {
 
-    // Create a LatLngBounds object that contains the whole path
-    var routeBounds = new google.maps.LatLngBounds();
-    for (var i = 0; i < vertices.length; i++) {
-        routeBounds.extend(vertices[i]);
-    }
-    
-    // Find the center of the bounding box of the path
-    var routeBoundsCenter = routeBounds.getCenter();
-    
-    // Starting from the center define grid lines outwards vertically until they
-    //  extend beyond the edge of the bounding box by more than one cell
-    this.latGrid_.push(routeBoundsCenter.lat());
-    
-    // Add lines from the center out to the north
-    this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range).lat());
-    for (i = 2; this.latGrid_[i - 2] < routeBounds.getNorthEast().lat(); i++) {
-        this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range * i).lat());
-    }
+        // Create a LatLngBounds object that contains the whole path
+        let routeBounds = new google.maps.LatLngBounds();
+        for (let i = 0; i < vertices.length; i++) {
+            routeBounds.extend(vertices[i]);
+        }
+        
+        // Find the center of the bounding box of the path
+        let routeBoundsCenter = routeBounds.getCenter();
+        
+        // Starting from the center define grid lines outwards vertically until they
+        //  extend beyond the edge of the bounding box by more than one cell
+        this.latGrid_.push(routeBoundsCenter.lat());
+        
+        // Add lines from the center out to the north
+        this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range).lat());
+        for (let i = 2; this.latGrid_[i - 2] < routeBounds.getNorthEast().lat(); i++) {
+            this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range * i).lat());
+        }
 
-    // Add lines from the center out to the south  
-    for (i = 1; this.latGrid_[1] > routeBounds.getSouthWest().lat(); i++) {
-        this.latGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(180, range * i).lat());
-    }
+        // Add lines from the center out to the south  
+        for (let i = 1; this.latGrid_[1] > routeBounds.getSouthWest().lat(); i++) {
+            this.latGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(180, range * i).lat());
+        }
 
-    // Starting from the center define grid lines outwards horizontally until they
-    //  extend beyond the edge of the bounding box by more than one cell  
-    this.lngGrid_.push(routeBoundsCenter.lng());
-    
-    // Add lines from the center out to the east
-    this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range).lng());
-    for (i = 2; this.lngGrid_[i - 2] < routeBounds.getNorthEast().lng(); i++) {
-        this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range * i).lng());
+        // Starting from the center define grid lines outwards horizontally until they
+        //  extend beyond the edge of the bounding box by more than one cell  
+        this.lngGrid_.push(routeBoundsCenter.lng());
+        
+        // Add lines from the center out to the east
+        this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range).lng());
+        for (let i = 2; this.lngGrid_[i - 2] < routeBounds.getNorthEast().lng(); i++) {
+            this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range * i).lng());
+        }
+        
+        // Add lines from the center out to the west
+        for (let i = 1; this.lngGrid_[1] > routeBounds.getSouthWest().lng(); i++) {
+            this.lngGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(270, range * i).lng());
+        }
+        
+        // Create a two dimensional array representing this grid
+        this.grid_ = new Array(this.lngGrid_.length);
+        for (let i = 0; i < this.grid_.length; i++) {
+            this.grid_[i] = new Array(this.latGrid_.length);
+        }
     }
-    
-    // Add lines from the center out to the west
-    for (i = 1; this.lngGrid_[1] > routeBounds.getSouthWest().lng(); i++) {
-        this.lngGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(270, range * i).lng());
-    }
-    
-    // Create a two dimensional array representing this grid
-    this.grid_ = new Array(this.lngGrid_.length);
-    for (i = 0; i < this.grid_.length; i++) {
-        this.grid_[i] = new Array(this.latGrid_.length);
-    }
-    };
 
     /**
      * Find all of the cells in the overlaid grid that the path intersects
      *
-     * @param {LatLng[]} vertices The vertices of the path
+     * @param {google.maps.LatLng[]} vertices The vertices of the path
      */
-    RouteBoxer.prototype.findIntersectingCells_ = function (vertices) {
-    // Find the cell where the path begins
-    var hintXY = this.getCellCoords_(vertices[0]);
-    
-    // Mark that cell and it's neighbours for inclusion in the boxes
-    this.markCell_(hintXY);
+    findIntersectingCells_(vertices: google.maps.LatLng[]): void {
+        // Find the cell where the path begins
+        let hintXY = this.getCellCoords_(vertices[0]);
+        
+        // Mark that cell and it's neighbours for inclusion in the boxes
+        this.markCell_(hintXY);
 
-    // Work through each vertex on the path identifying which grid cell it is in
-    for (var i = 1; i < vertices.length; i++) {
-        // Use the known cell of the previous vertex to help find the cell of this vertex
-        var gridXY = this.getGridCoordsFromHint_(vertices[i], vertices[i - 1], hintXY);
-        
-        if (gridXY[0] === hintXY[0] && gridXY[1] === hintXY[1]) {
-        // This vertex is in the same cell as the previous vertex
-        // The cell will already have been marked for inclusion in the boxes
-        continue;
-        
-        } else if ((Math.abs(hintXY[0] - gridXY[0]) === 1 && hintXY[1] === gridXY[1]) ||
-            (hintXY[0] === gridXY[0] && Math.abs(hintXY[1] - gridXY[1]) === 1)) {
-        // This vertex is in a cell that shares an edge with the previous cell
-        // Mark this cell and it's neighbours for inclusion in the boxes
-        this.markCell_(gridXY);
-        
-        } else {
-        // This vertex is in a cell that does not share an edge with the previous
-        //  cell. This means that the path passes through other cells between
-        //  this vertex and the previous vertex, and we must determine which cells
-        //  it passes through
-        this.getGridIntersects_(vertices[i - 1], vertices[i], hintXY, gridXY);
+        // Work through each vertex on the path identifying which grid cell it is in
+        for (let i = 1; i < vertices.length; i++) {
+            // Use the known cell of the previous vertex to help find the cell of this vertex
+            let gridXY = this.getGridCoordsFromHint_(vertices[i], vertices[i - 1], hintXY);
+            
+            if (gridXY[0] === hintXY[0] && gridXY[1] === hintXY[1]) {
+            // This vertex is in the same cell as the previous vertex
+            // The cell will already have been marked for inclusion in the boxes
+            continue;
+            
+            } else if ((Math.abs(hintXY[0] - gridXY[0]) === 1 && hintXY[1] === gridXY[1]) ||
+                (hintXY[0] === gridXY[0] && Math.abs(hintXY[1] - gridXY[1]) === 1)) {
+            // This vertex is in a cell that shares an edge with the previous cell
+            // Mark this cell and it's neighbours for inclusion in the boxes
+            this.markCell_(gridXY);
+            
+            } else {
+            // This vertex is in a cell that does not share an edge with the previous
+            //  cell. This means that the path passes through other cells between
+            //  this vertex and the previous vertex, and we must determine which cells
+            //  it passes through
+            this.getGridIntersects_(vertices[i - 1], vertices[i], hintXY, gridXY);
+            }
+            
+            // Use this cell to find and compare with the next one
+            hintXY = gridXY;
         }
-        
-        // Use this cell to find and compare with the next one
-        hintXY = gridXY;
-    }
     };
 
     /**
