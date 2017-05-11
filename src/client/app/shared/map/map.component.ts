@@ -45,17 +45,14 @@ export class MapComponent implements OnInit {
     this.latitude = 39.8282;
     this.longitude = -98.5795;
 
-    //create search FormGroup
     this.climbSearch = new FormGroup({
       originSearchControl: new FormControl('', Validators.required),
       destSearchControl: new FormControl('', Validators.required),
       distanceControl: new FormControl('', Validators.required)
     });
 
-    //set current position
     this.setCurrentPosition();
 
-    //load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
@@ -82,9 +79,7 @@ export class MapComponent implements OnInit {
   private setupPlaceChangedListener(autocomplete: any, mode: any ) {
     autocomplete.addListener("place_changed", () => {
         this.ngZone.run(() => {
-          //get the place result
           let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-          //verify result
           if (place.geometry === undefined) {
             return;
           }
@@ -103,16 +98,14 @@ export class MapComponent implements OnInit {
               }); 
           }
 
-          //Update the directions
-          this.directions.updateDirections();
+          this.directions.updateRoute();
           this.zoom = 12;
         });
 
       });
     }
 
-    onSubmit({ formVals, valid }: { formVals: any, valid: boolean }) {
-      console.log(formVals, valid);
-      this.directions.findCrags(formVals.distanceControl.value);
+    onSubmit({ value, valid }: { value: any, valid: boolean }) {
+      this.directions.findCrags(value.distanceControl);
     }
 }
