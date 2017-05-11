@@ -1,5 +1,6 @@
 import { Directive,  Input, Output } from '@angular/core';
 import { GoogleMapsAPIWrapper }  from '@agm/core';
+import { RouteBoxerService } from '../routeboxer/routeboxer.service';
  
 declare var google: any;
 declare var RouteBoxer: any;
@@ -20,7 +21,8 @@ export class DirectionsMapDirective {
   private map: any;
 
   constructor (
-    private gmapsApi: GoogleMapsAPIWrapper
+    private gmapsApi: GoogleMapsAPIWrapper,
+    private routerBoxerService: RouteBoxerService
   ) {}
 
   updateRoute() {

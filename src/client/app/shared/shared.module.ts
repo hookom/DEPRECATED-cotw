@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { MapComponent } from './map/map.component';
-import { NameListService } from './name-list/name-list.service';
+import { RouteBoxerService } from './routeboxer/routeboxer.service';
 import { AgmCoreModule } from '@agm/core';
 import { DirectionsMapDirective } from './map/directions.directive';
 
@@ -30,7 +30,7 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,
-      providers: [NameListService]
+      providers: [RouteBoxerService]
     };
   }
 }
