@@ -6,10 +6,9 @@ declare var google: any;
 @Injectable()
 export class RouteBoxerService {
 
-    constructor(
-        private R: number = 6371
-    ) {}
-
+    constructor() {}
+    
+    private R: number = 6371
     private grid_: any;
     private latGrid_: any;
     private lngGrid_: any;
@@ -247,7 +246,7 @@ export class RouteBoxerService {
      */ 
     getGridIntersects_(start: google.maps.LatLng, end: google.maps.LatLng, startXY: number[], endXY: number[]): void {
         let edgePoint, edgeXY, i;
-        let brng = this.rhumbBearingTo(start, end);         // Step 1.
+        let brng = this.rhumbBearingTo(start, end);
         
         let hint = start;
         let hintXY = startXY;

@@ -3,7 +3,6 @@ import { GoogleMapsAPIWrapper }  from '@agm/core';
 import { RouteBoxerService } from '../routeboxer/routeboxer.service';
  
 declare var google: any;
-declare var RouteBoxer: any;
 
 @Directive({
   selector: 'sebm-google-map-directions'
@@ -22,7 +21,7 @@ export class DirectionsMapDirective {
 
   constructor (
     private gmapsApi: GoogleMapsAPIWrapper,
-    private routerBoxerService: RouteBoxerService
+    private routeBoxerService: RouteBoxerService
   ) {}
 
   updateRoute() {
@@ -34,7 +33,7 @@ export class DirectionsMapDirective {
 
         this.map = map;
         var directionsService = new google.maps.DirectionsService;
-        var me = this;
+        var globalsRef = this;
         var latLngA = new google.maps.LatLng({lat: this.origin.latitude, lng: this.origin.longitude });
         var latLngB = new google.maps.LatLng({lat: this.destination.latitude, lng: this.destination.longitude });
         this.directionsDisplay.setMap(map);
@@ -54,8 +53,8 @@ export class DirectionsMapDirective {
             travelMode: google.maps.DirectionsTravelMode.DRIVING
         }, function(response: any, status: any) {
             if (status === 'OK') {
-                me.currentRoute = response.routes[0];
-                me.directionsDisplay.setDirections(response);
+                globalsRef.currentRoute = response.routes[0];
+                globalsRef.directionsDisplay.setDirections(response);
                 map.setZoom(30);
                 var point = response.routes[ 0 ].legs[ 0 ];
                 console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
@@ -67,7 +66,6 @@ export class DirectionsMapDirective {
   }
 
   findCrags(dist: number) {
-    var routeBoxer = new RouteBoxer();
     this.clearBoxes();
     this.clearMarkers();
 
@@ -80,7 +78,7 @@ export class DirectionsMapDirective {
       var path = this.currentRoute.overview_path;
       console.log("path: " + path);
       console.log("distance: " + distance);
-      var boxes = routeBoxer.box(path, distance);
+      var boxes = this.routeBoxerService.box(path, distance);
 
       this.drawBoxes(boxes);
       this.findMarkers(boxes);
