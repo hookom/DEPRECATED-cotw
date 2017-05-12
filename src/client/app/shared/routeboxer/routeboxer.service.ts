@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { GoogleMapsAPIWrapper }  from '@agm/core';
+
+declare var google: any;
 
 @Injectable()
 export class RouteBoxerService {
@@ -105,14 +108,14 @@ export class RouteBoxerService {
         this.latGrid_.push(routeBoundsCenter.lat());
         
         // Add lines from the center out to the north
-        this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range).lat());
+        this.latGrid_.push(this.rhumbDestinationPoint(routeBoundsCenter, 0, range).lat());
         for (let i = 2; this.latGrid_[i - 2] < routeBounds.getNorthEast().lat(); i++) {
-            this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range * i).lat());
+            this.latGrid_.push(this.rhumbDestinationPoint(routeBoundsCenter, 0, range * i).lat());
         }
 
         // Add lines from the center out to the south  
         for (let i = 1; this.latGrid_[1] > routeBounds.getSouthWest().lat(); i++) {
-            this.latGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(180, range * i).lat());
+            this.latGrid_.unshift(this.rhumbDestinationPoint(routeBoundsCenter, 180, range * i).lat());
         }
 
         // Starting from the center define grid lines outwards horizontally until they
@@ -120,14 +123,14 @@ export class RouteBoxerService {
         this.lngGrid_.push(routeBoundsCenter.lng());
         
         // Add lines from the center out to the east
-        this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range).lng());
+        this.lngGrid_.push(this.rhumbDestinationPoint(routeBoundsCenter, 90, range).lng());
         for (let i = 2; this.lngGrid_[i - 2] < routeBounds.getNorthEast().lng(); i++) {
-            this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range * i).lng());
+            this.lngGrid_.push(this.rhumbDestinationPoint(routeBoundsCenter, 90, range * i).lng());
         }
         
         // Add lines from the center out to the west
         for (let i = 1; this.lngGrid_[1] > routeBounds.getSouthWest().lng(); i++) {
-            this.lngGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(270, range * i).lng());
+            this.lngGrid_.unshift(this.rhumbDestinationPoint(routeBoundsCenter, 270, range * i).lng());
         }
         
         // Create a two dimensional array representing this grid
@@ -176,46 +179,52 @@ export class RouteBoxerService {
             // Use this cell to find and compare with the next one
             hintXY = gridXY;
         }
-    };
+    }
 
     /**
      * Find the cell a path vertex is in by brute force iteration over the grid
      *
-     * @param {LatLng[]} latlng The latlng of the vertex
-     * @return {Number[][]} The cell coordinates of this vertex in the grid
+     * @param {google.maps.LatLng} latlng The latlng of the vertex
+     * @return {Number[]} The cell coordinates of this vertex in the grid
      */ 
-    RouteBoxer.prototype.getCellCoords_ = function (latlng) {
-    for (var x = 0; this.lngGrid_[x] < latlng.lng(); x++) {}
-    for (var y = 0; this.latGrid_[y] < latlng.lat(); y++) {}
-    return ([x - 1, y - 1]);
-    };
+    getCellCoords_(latlng: google.maps.LatLng): number[] {
+        let x = 0;
+        let y = 0;
+        while (this.lngGrid_[x] < latlng.lng()) {
+            x++;
+        }
+        while (this.lngGrid_[y] < latlng.lng()) {
+            y++;
+        }
+        return ([x - 1, y - 1]);
+    }
 
     /**
      * Find the cell a path vertex is in based on the known location of a nearby
      *  vertex. This saves searching the whole grid when working through vertices
      *  on the polyline that are likely to be in close proximity to each other.
      *
-     * @param {LatLng[]} latlng The latlng of the vertex to locate in the grid
-     * @param {LatLng[]} hintlatlng The latlng of the vertex with a known location
+     * @param {google.maps.LatLng} latlng The latlng of the vertex to locate in the grid
+     * @param {google.maps.LatLng} hintlatlng The latlng of the vertex with a known location
      * @param {Number[]} hint The cell containing the vertex with a known location
      * @return {Number[]} The cell coordinates of the vertex to locate in the grid
      */ 
-    RouteBoxer.prototype.getGridCoordsFromHint_ = function (latlng, hintlatlng, hint) {
-    var x, y;
-    if (latlng.lng() > hintlatlng.lng()) {
-        for (x = hint[0]; this.lngGrid_[x + 1] < latlng.lng(); x++) {}
-    } else {
-        for (x = hint[0]; this.lngGrid_[x] > latlng.lng(); x--) {}
+    getGridCoordsFromHint_(latlng: google.maps.LatLng, hintlatlng: google.maps.LatLng, hint: number[]): number[] {
+        let x, y;
+        if (latlng.lng() > hintlatlng.lng()) {
+            for (x = hint[0]; this.lngGrid_[x + 1] < latlng.lng(); x++) {}
+        } else {
+            for (x = hint[0]; this.lngGrid_[x] > latlng.lng(); x--) {}
+        }
+        
+        if (latlng.lat() > hintlatlng.lat()) {
+            for (y = hint[1]; this.latGrid_[y + 1] < latlng.lat(); y++) {}
+        } else {        
+            for (y = hint[1]; this.latGrid_[y] > latlng.lat(); y--) {}
+        }
+        
+        return ([x, y]);
     }
-    
-    if (latlng.lat() > hintlatlng.lat()) {
-        for (y = hint[1]; this.latGrid_[y + 1] < latlng.lat(); y++) {}
-    } else {        
-        for (y = hint[1]; this.latGrid_[y] > latlng.lat(); y--) {}
-    }
-    
-    return ([x, y]);
-    };
 
 
     /**
@@ -231,84 +240,83 @@ export class RouteBoxerService {
      *     (or start) and the current one (or end) at the current y coordinate,
      *     which is known for the grid line being intersected
      *     
-     * @param {LatLng} start The latlng of the vertex at the start of the segment
-     * @param {LatLng} end The latlng of the vertex at the end of the segment
+     * @param {google.maps.LatLng} start The latlng of the vertex at the start of the segment
+     * @param {google.maps.LatLng} end The latlng of the vertex at the end of the segment
      * @param {Number[]} startXY The cell containing the start vertex
      * @param {Number[]} endXY The cell containing the vend vertex
      */ 
-    RouteBoxer.prototype.getGridIntersects_ = function (start, end, startXY, endXY) {
-    var edgePoint, edgeXY, i;
-    var brng = start.rhumbBearingTo(end);         // Step 1.
-    
-    var hint = start;
-    var hintXY = startXY;
-    
-    // Handle a line segment that travels south first
-    if (end.lat() > start.lat()) {
-        // Iterate over the east to west grid lines between the start and end cells
-        for (i = startXY[1] + 1; i <= endXY[1]; i++) {
-        // Find the latlng of the point where the path segment intersects with
-        //  this grid line (Step 2 & 3)
-        edgePoint = this.getGridIntersect_(start, brng, this.latGrid_[i]);
+    getGridIntersects_(start: google.maps.LatLng, end: google.maps.LatLng, startXY: number[], endXY: number[]): void {
+        let edgePoint, edgeXY, i;
+        let brng = this.rhumbBearingTo(start, end);         // Step 1.
         
-        // Find the cell containing this intersect point (Step 4)
-        edgeXY = this.getGridCoordsFromHint_(edgePoint, hint, hintXY);
+        let hint = start;
+        let hintXY = startXY;
         
-        // Mark every cell the path has crossed between this grid and the start,
-        //   or the previous east to west grid line it crossed (Step 5)
-        this.fillInGridSquares_(hintXY[0], edgeXY[0], i - 1);
-        
-        // Use the point where it crossed this grid line as the reference for the
-        //  next iteration
-        hint = edgePoint;
-        hintXY = edgeXY;
-        }
-        
-        // Mark every cell the path has crossed between the last east to west grid
-        //  line it crossed and the end (Step 5)
-        this.fillInGridSquares_(hintXY[0], endXY[0], i - 1);
-        
-    } else {
-        // Iterate over the east to west grid lines between the start and end cells
-        for (i = startXY[1]; i > endXY[1]; i--) {
-        // Find the latlng of the point where the path segment intersects with
-        //  this grid line (Step 2 & 3)
-        edgePoint = this.getGridIntersect_(start, brng, this.latGrid_[i]);
-        
-        // Find the cell containing this intersect point (Step 4)
-        edgeXY = this.getGridCoordsFromHint_(edgePoint, hint, hintXY);
+        // Handle a line segment that travels south first
+        if (end.lat() > start.lat()) {
+            // Iterate over the east to west grid lines between the start and end cells
+            for (i = startXY[1] + 1; i <= endXY[1]; i++) {
+                // Find the latlng of the point where the path segment intersects with
+                //  this grid line (Step 2 & 3)
+                edgePoint = this.getGridIntersect_(start, brng, this.latGrid_[i]);
+                
+                // Find the cell containing this intersect point (Step 4)
+                edgeXY = this.getGridCoordsFromHint_(edgePoint, hint, hintXY);
+                
+                // Mark every cell the path has crossed between this grid and the start,
+                //   or the previous east to west grid line it crossed (Step 5)
+                this.fillInGridSquares_(hintXY[0], edgeXY[0], i - 1);
+                
+                // Use the point where it crossed this grid line as the reference for the
+                //  next iteration
+                hint = edgePoint;
+                hintXY = edgeXY;
+            }
+            
+            // Mark every cell the path has crossed between the last east to west grid
+            //  line it crossed and the end (Step 5)
+            this.fillInGridSquares_(hintXY[0], endXY[0], i - 1);
+            
+        } else {
+            // Iterate over the east to west grid lines between the start and end cells
+            for (i = startXY[1]; i > endXY[1]; i--) {
+                // Find the latlng of the point where the path segment intersects with
+                //  this grid line (Step 2 & 3)
+                edgePoint = this.getGridIntersect_(start, brng, this.latGrid_[i]);
+                
+                // Find the cell containing this intersect point (Step 4)
+                edgeXY = this.getGridCoordsFromHint_(edgePoint, hint, hintXY);
 
-        // Mark every cell the path has crossed between this grid and the start,
-        //   or the previous east to west grid line it crossed (Step 5)
-        this.fillInGridSquares_(hintXY[0], edgeXY[0], i);
+                // Mark every cell the path has crossed between this grid and the start,
+                //   or the previous east to west grid line it crossed (Step 5)
+                this.fillInGridSquares_(hintXY[0], edgeXY[0], i);
 
-        // Use the point where it crossed this grid line as the reference for the
-        //  next iteration
-        hint = edgePoint;
-        hintXY = edgeXY;
+                // Use the point where it crossed this grid line as the reference for the
+                //  next iteration
+                hint = edgePoint;
+                hintXY = edgeXY;
+            }
+            
+            // Mark every cell the path has crossed between the last east to west grid
+            //  line it crossed and the end (Step 5)
+            this.fillInGridSquares_(hintXY[0], endXY[0], i);
         }
-        
-        // Mark every cell the path has crossed between the last east to west grid
-        //  line it crossed and the end (Step 5)
-        this.fillInGridSquares_(hintXY[0], endXY[0], i);
-        
     }
-    };
 
     /**
      * Find the latlng at which a path segment intersects with a given
      *   line of latitude
      *     
-     * @param {LatLng} start The vertex at the start of the path segment
+     * @param {google.maps.LatLng} start The vertex at the start of the path segment
      * @param {Number} brng The bearing of the line from start to end
      * @param {Number} gridLineLat The latitude of the grid line being intersected
-     * @return {LatLng} The latlng of the point where the path segment intersects
+     * @return {google.maps.LatLng} The latlng of the point where the path segment intersects
      *                    the grid line
      */ 
-    RouteBoxer.prototype.getGridIntersect_ = function (start, brng, gridLineLat) {
-    var d = this.R * ((gridLineLat.toRad() - start.lat().toRad()) / Math.cos(brng.toRad()));
-    return start.rhumbDestinationPoint(brng, d);
-    };
+    getGridIntersect_(start: google.maps.LatLng, brng: number, gridLineLat: number): google.maps.LatLng {
+        let d = this.R * ((this.toRad(gridLineLat) - this.toRad(start.lat())) / Math.cos(this.toRad(brng)));
+        return this.rhumbDestinationPoint(start, brng, d);
+    }
 
     /**
      * Mark all cells in a given row of the grid that lie between two columns
@@ -318,37 +326,37 @@ export class RouteBoxerService {
      * @param {Number} endx The last column to include
      * @param {Number} y The row of the cells to include
      */ 
-    RouteBoxer.prototype.fillInGridSquares_ = function (startx, endx, y) {
-    var x;
-    if (startx < endx) {
-        for (x = startx; x <= endx; x++) {
-        this.markCell_([x, y]);
-        }
-    } else {
-        for (x = startx; x >= endx; x--) {
-        this.markCell_([x, y]);
-        }            
-    }      
-    };
+    fillInGridSquares_(startx: number, endx: number, y: number): void {
+        let x;
+        if (startx < endx) {
+            for (x = startx; x <= endx; x++) {
+                this.markCell_([x, y]);
+            }
+        } else {
+            for (x = startx; x >= endx; x--) {
+                this.markCell_([x, y]);
+            }            
+        }      
+    }
 
     /**
      * Mark a cell and the 8 immediate neighbours for inclusion in the boxes
      *     
      * @param {Number[]} square The cell to mark
      */ 
-    RouteBoxer.prototype.markCell_ = function (cell) {
-    var x = cell[0];
-    var y = cell[1];
-    this.grid_[x - 1][y - 1] = 1;
-    this.grid_[x][y - 1] = 1;
-    this.grid_[x + 1][y - 1] = 1;
-    this.grid_[x - 1][y] = 1;
-    this.grid_[x][y] = 1;
-    this.grid_[x + 1][y] = 1;
-    this.grid_[x - 1][y + 1] = 1;
-    this.grid_[x][y + 1] = 1;
-    this.grid_[x + 1][y + 1] = 1;
-    };
+    markCell_(cell: number[]): void {
+        let x = cell[0];
+        let y = cell[1];
+        this.grid_[x - 1][y - 1] = 1;
+        this.grid_[x][y - 1] = 1;
+        this.grid_[x + 1][y - 1] = 1;
+        this.grid_[x - 1][y] = 1;
+        this.grid_[x][y] = 1;
+        this.grid_[x + 1][y] = 1;
+        this.grid_[x - 1][y + 1] = 1;
+        this.grid_[x][y + 1] = 1;
+        this.grid_[x + 1][y + 1] = 1;
+    }
 
     /**
      * Create two sets of bounding boxes, both of which cover all of the cells that
@@ -363,92 +371,91 @@ export class RouteBoxerService {
      *   width that are adjacent vertically.
      *     
      */ 
-    RouteBoxer.prototype.mergeIntersectingCells_ = function () {
-    var x, y, box;
-    
-    // The box we are currently expanding with new cells
-    var currentBox = null;
-    
-    // Traverse the grid a row at a time
-    for (y = 0; y < this.grid_[0].length; y++) {
-        for (x = 0; x < this.grid_.length; x++) {
+    mergeIntersectingCells_(): void {
+        // The box we are currently expanding with new cells
+        let currentBox = null;
         
-        if (this.grid_[x][y]) {
-            // This cell is marked for inclusion. If the previous cell in this
-            //   row was also marked for inclusion, merge this cell into it's box.
-            // Otherwise start a new box.
-            box = this.getCellBounds_([x, y]);
-            if (currentBox) {
-            currentBox.extend(box.getNorthEast());
-            } else {
-            currentBox = box;
-            }
+        // Traverse the grid a row at a time
+        for (let y = 0; y < this.grid_[0].length; y++) {
+            for (let x = 0; x < this.grid_.length; x++) {
             
-        } else {
-            // This cell is not marked for inclusion. If the previous cell was
-            //  marked for inclusion, merge it's box with a box that spans the same
-            //  columns from the row below if possible.
+                if (this.grid_[x][y]) {
+                    // This cell is marked for inclusion. If the previous cell in this
+                    //   row was also marked for inclusion, merge this cell into it's box.
+                    // Otherwise start a new box.
+                    let box = this.getCellBounds_([x, y]);
+                    if (currentBox) {
+                        currentBox.extend(box.getNorthEast());
+                    } else {
+                        currentBox = box;
+                    }
+                    
+                } else {
+                    // This cell is not marked for inclusion. If the previous cell was
+                    //  marked for inclusion, merge it's box with a box that spans the same
+                    //  columns from the row below if possible.
+                    this.mergeBoxesY_(currentBox);
+                    currentBox = null;
+                }
+
+            }
+            // If the last cell was marked for inclusion, merge it's box with a matching
+            //  box from the row below if possible.
             this.mergeBoxesY_(currentBox);
             currentBox = null;
         }
-        }
-        // If the last cell was marked for inclusion, merge it's box with a matching
-        //  box from the row below if possible.
-        this.mergeBoxesY_(currentBox);
-        currentBox = null;
-    }
 
-    // Traverse the grid a column at a time
-    for (x = 0; x < this.grid_.length; x++) {
-        for (y = 0; y < this.grid_[0].length; y++) {
-        if (this.grid_[x][y]) {
-            
-            // This cell is marked for inclusion. If the previous cell in this
-            //   column was also marked for inclusion, merge this cell into it's box.
-            // Otherwise start a new box.
-            if (currentBox) {
-            box = this.getCellBounds_([x, y]);
-            currentBox.extend(box.getNorthEast());
-            } else {
-            currentBox = this.getCellBounds_([x, y]);
+        // Traverse the grid a column at a time
+        for (let x = 0; x < this.grid_.length; x++) {
+            for (let y = 0; y < this.grid_[0].length; y++) {
+                if (this.grid_[x][y]) {
+                    
+                    // This cell is marked for inclusion. If the previous cell in this
+                    //   column was also marked for inclusion, merge this cell into it's box.
+                    // Otherwise start a new box.
+                    if (currentBox) {
+                    let box = this.getCellBounds_([x, y]);
+                        currentBox.extend(box.getNorthEast());
+                    } else {
+                        currentBox = this.getCellBounds_([x, y]);
+                    }
+                    
+                } else {
+                    // This cell is not marked for inclusion. If the previous cell was
+                    //  marked for inclusion, merge it's box with a box that spans the same
+                    //  rows from the column to the left if possible.
+                    this.mergeBoxesX_(currentBox);
+                    currentBox = null;
+                    
+                }
             }
-            
-        } else {
-            // This cell is not marked for inclusion. If the previous cell was
-            //  marked for inclusion, merge it's box with a box that spans the same
-            //  rows from the column to the left if possible.
+            // If the last cell was marked for inclusion, merge it's box with a matching
+            //  box from the column to the left if possible.
             this.mergeBoxesX_(currentBox);
             currentBox = null;
-            
         }
-        }
-        // If the last cell was marked for inclusion, merge it's box with a matching
-        //  box from the column to the left if possible.
-        this.mergeBoxesX_(currentBox);
-        currentBox = null;
     }
-    };
 
     /**
      * Search for an existing box in an adjacent row to the given box that spans the
      * same set of columns and if one is found merge the given box into it. If one
      * is not found, append this box to the list of existing boxes.
      *
-     * @param {LatLngBounds}  The box to merge
+     * @param {google.maps.LatLngBounds}  The box to merge
      */ 
-    RouteBoxer.prototype.mergeBoxesX_ = function (box) {
-    if (box !== null) {
-        for (var i = 0; i < this.boxesX_.length; i++) {
-        if (this.boxesX_[i].getNorthEast().lng() === box.getSouthWest().lng() &&
-            this.boxesX_[i].getSouthWest().lat() === box.getSouthWest().lat() &&
-            this.boxesX_[i].getNorthEast().lat() === box.getNorthEast().lat()) {
-            this.boxesX_[i].extend(box.getNorthEast());
-            return;
+    mergeBoxesX_(box: google.maps.LatLngBounds): void {
+        if (box !== null) {
+            for (let i = 0; i < this.boxesX_.length; i++) {
+                if (this.boxesX_[i].getNorthEast().lng() === box.getSouthWest().lng() &&
+                    this.boxesX_[i].getSouthWest().lat() === box.getSouthWest().lat() &&
+                    this.boxesX_[i].getNorthEast().lat() === box.getNorthEast().lat()) {
+                    this.boxesX_[i].extend(box.getNorthEast());
+                    return;
+                }
+            }
+            this.boxesX_.push(box);
         }
-        }
-        this.boxesX_.push(box);
     }
-    };
 
     /**
      * Search for an existing box in an adjacent column to the given box that spans
@@ -457,18 +464,18 @@ export class RouteBoxerService {
      *
      * @param {LatLngBounds}  The box to merge
      */ 
-    RouteBoxer.prototype.mergeBoxesY_ = function (box) {
-    if (box !== null) {
-        for (var i = 0; i < this.boxesY_.length; i++) {
-        if (this.boxesY_[i].getNorthEast().lat() === box.getSouthWest().lat() &&
-            this.boxesY_[i].getSouthWest().lng() === box.getSouthWest().lng() &&
-            this.boxesY_[i].getNorthEast().lng() === box.getNorthEast().lng()) {
-            this.boxesY_[i].extend(box.getNorthEast());
-            return;
+    mergeBoxesY_(box: google.maps.LatLngBounds): void {
+        if (box !== null) {
+            for (let i = 0; i < this.boxesY_.length; i++) {
+                if (this.boxesY_[i].getNorthEast().lat() === box.getSouthWest().lat() &&
+                    this.boxesY_[i].getSouthWest().lng() === box.getSouthWest().lng() &&
+                    this.boxesY_[i].getNorthEast().lng() === box.getNorthEast().lng()) {
+                    this.boxesY_[i].extend(box.getNorthEast());
+                    return;
+                }
+            }
+            this.boxesY_.push(box);
         }
-        }
-        this.boxesY_.push(box);
-    }
     };
 
     /**
@@ -477,47 +484,46 @@ export class RouteBoxerService {
      * @param {Number[]} cell The cell to lookup.
      * @return {LatLng} The latlng of the origin of the cell.
      */ 
-    RouteBoxer.prototype.getCellBounds_ = function (cell) {
-    return new google.maps.LatLngBounds(
-        new google.maps.LatLng(this.latGrid_[cell[1]], this.lngGrid_[cell[0]]),
-        new google.maps.LatLng(this.latGrid_[cell[1] + 1], this.lngGrid_[cell[0] + 1]));
-    };
+    getCellBounds_(cell: number[]): google.maps.LatLng {
+        return new google.maps.LatLngBounds(
+            new google.maps.LatLng(this.latGrid_[cell[1]], this.lngGrid_[cell[0]]),
+            new google.maps.LatLng(this.latGrid_[cell[1] + 1], this.lngGrid_[cell[0] + 1]));
+    }
 
     /* Based on the Latitude/longitude spherical geodesy formulae & scripts
     at http://www.movable-type.co.uk/scripts/latlong.html
     (c) Chris Veness 2002-2010
     */ 
-    google.maps.LatLng.prototype.rhumbDestinationPoint = function (brng, dist) {
-    var R = 6371; // earth's mean radius in km
-    var d = parseFloat(dist) / R;  // d = angular distance covered on earth's surface
-    var lat1 = this.lat().toRad(), lon1 = this.lng().toRad();
-    brng = brng.toRad();
+    rhumbDestinationPoint(coord: google.maps.LatLng, brng: number, dist: number): google.maps.LatLng {
+        let d = dist / this.R;  // d = angular distance covered on earth's surface
+        let lat1 = this.toRad(coord.lat()), lon1 = this.toRad(coord.lng());
+        brng = this.toRad(brng);
 
-    var lat2 = lat1 + d * Math.cos(brng);
-    var dLat = lat2 - lat1;
-    var dPhi = Math.log(Math.tan(lat2 / 2 + Math.PI / 4) / Math.tan(lat1 / 2 + Math.PI / 4));
-    var q = (Math.abs(dLat) > 1e-10) ? dLat / dPhi : Math.cos(lat1);
-    var dLon = d * Math.sin(brng) / q;
-    // check for going past the pole
-    if (Math.abs(lat2) > Math.PI / 2) {
-        lat2 = lat2 > 0 ? Math.PI - lat2 : - (Math.PI - lat2);
+        let lat2 = lat1 + d * Math.cos(brng);
+        let dLat = lat2 - lat1;
+        let dPhi = Math.log(Math.tan(lat2 / 2 + Math.PI / 4) / Math.tan(lat1 / 2 + Math.PI / 4));
+        let q = (Math.abs(dLat) > 1e-10) ? dLat / dPhi : Math.cos(lat1);
+        let dLon = d * Math.sin(brng) / q;
+        // check for going past the pole
+        if (Math.abs(lat2) > Math.PI / 2) {
+            lat2 = lat2 > 0 ? Math.PI - lat2 : - (Math.PI - lat2);
+        }
+        let lon2 = (lon1 + dLon + Math.PI) % (2 * Math.PI) - Math.PI;
+        
+        if (isNaN(lat2) || isNaN(lon2)) {
+            return null;
+        }
+        return new google.maps.LatLng(this.toDeg(lat2), this.toDeg(lon2));
     }
-    var lon2 = (lon1 + dLon + Math.PI) % (2 * Math.PI) - Math.PI;
-    
-    if (isNaN(lat2) || isNaN(lon2)) {
-        return null;
-    }
-    return new google.maps.LatLng(lat2.toDeg(), lon2.toDeg());
-    };
 
-    google.maps.LatLng.prototype.rhumbBearingTo = function (dest) {
-    var dLon = (dest.lng() - this.lng()).toRad();
-    var dPhi = Math.log(Math.tan(dest.lat().toRad() / 2 + Math.PI / 4) / Math.tan(this.lat().toRad() / 2 + Math.PI / 4));
-    if (Math.abs(dLon) > Math.PI) {
-        dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
+    rhumbBearingTo = function (coord: google.maps.LatLng, dest: google.maps.LatLng): number {
+        let dLon = this.toRad(dest.lng() - coord.lng());
+        let dPhi = Math.log(Math.tan(this.toRad(dest.lat()) / 2 + Math.PI / 4) / Math.tan(this.toRad(coord.lat()) / 2 + Math.PI / 4));
+        if (Math.abs(dLon) > Math.PI) {
+            dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
+        }
+        return this.toBrng(Math.atan2(dLon, dPhi));
     }
-    return Math.atan2(dLon, dPhi).toBrng();
-    };
 
     /**
      * Extend the Number object to convert degrees to radians
@@ -525,9 +531,12 @@ export class RouteBoxerService {
      * @return {Number} Bearing in radians
      * @ignore
      */ 
-    Number.prototype.toRad = function () {
-    return this * Math.PI / 180;
-    };
+    // Number.prototype.toRad = function () {
+    //     return this * Math.PI / 180;
+    // }
+    toRad(num: number): number {
+        return num * Math.PI / 180;
+    }
 
     /**
      * Extend the Number object to convert radians to degrees
@@ -535,9 +544,12 @@ export class RouteBoxerService {
      * @return {Number} Bearing in degrees
      * @ignore
      */ 
-    Number.prototype.toDeg = function () {
-    return this * 180 / Math.PI;
-    };
+    // Number.prototype.toDeg = function () {
+    //     return this * 180 / Math.PI;
+    // }
+    toDeg(num: number): number {
+        return num * 180 / Math.PI;
+    }
 
     /**
      * Normalize a heading in degrees to between 0 and +360
@@ -545,8 +557,11 @@ export class RouteBoxerService {
      * @return {Number} Return 
      * @ignore
      */ 
-    Number.prototype.toBrng = function () {
-    return (this.toDeg() + 360) % 360;
-    };
+    // Number.prototype.toBrng = function () {
+    //     return (this.toDeg() + 360) % 360;
+    // }
+    toBrng(num: number): number {
+        return (this.toDeg(num) + 360) % 360;
+    }
 }
 

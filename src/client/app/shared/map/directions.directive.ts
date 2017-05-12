@@ -1,4 +1,4 @@
-import { Directive,  Input, Output } from '@angular/core';
+import { Directive, Input, Output } from '@angular/core';
 import { GoogleMapsAPIWrapper }  from '@agm/core';
 import { RouteBoxerService } from '../routeboxer/routeboxer.service';
  
