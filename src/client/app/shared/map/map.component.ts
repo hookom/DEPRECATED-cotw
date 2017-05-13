@@ -1,10 +1,9 @@
-import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, Input } from '@angular/core'
+import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { MapsAPILoader, AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { DirectionsMapDirective } from './directions.directive';
-
-declare var google: any;
+import { } from '@types/googlemaps';
 
 @Component({
     moduleId: module.id,
@@ -12,7 +11,7 @@ declare var google: any;
     templateUrl: 'map.component.html',
     styleUrls: ['map.component.css'],
     providers: [GoogleMapsAPIWrapper]
-}) 
+})
 
 export class MapComponent implements OnInit {
 
@@ -21,10 +20,10 @@ export class MapComponent implements OnInit {
   public zoom: number;
   public climbSearch: FormGroup;
 
-  @ViewChild("originSearch")
+  @ViewChild('originSearch')
   public originSearchElementRef: ElementRef;
 
-  @ViewChild("destSearch")
+  @ViewChild('destSearch')
   public destSearchElementRef: ElementRef;
 
   @ViewChild(DirectionsMapDirective)
@@ -66,8 +65,12 @@ export class MapComponent implements OnInit {
     });
   }
 
+  onSubmit({ value, valid }: { value: any, valid: boolean }) {
+    this.directions.findCrags(value.distanceControl);
+  }
+
   private setCurrentPosition() {
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
@@ -77,25 +80,31 @@ export class MapComponent implements OnInit {
   }
 
   private setupPlaceChangedListener(autocomplete: any, mode: any ) {
-    autocomplete.addListener("place_changed", () => {
+    autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
           let place: google.maps.places.PlaceResult = autocomplete.getPlace();
           if (place.geometry === undefined) {
             return;
           }
           if (mode === 'ORG') {
-            this.directions.origin = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; 
+            this.directions.origin = {
+              longitude: place.geometry.location.lng(),
+              latitude: place.geometry.location.lat()
+            };
             this.directions.originPlaceId = place.place_id;
           } else {
-            this.directions.destination = { longitude: place.geometry.location.lng(), latitude: place.geometry.location.lat() }; // its a example aleatory position
+            this.directions.destination = {
+              longitude: place.geometry.location.lng(),
+              latitude: place.geometry.location.lat()
+            };
             this.directions.destinationPlaceId = place.place_id;
           }
 
           if(this.directions.directionsDisplay === undefined) {
             this.mapsAPILoader.load()
-              .then(() => { 
+              .then(() => {
                 this.directions.directionsDisplay = new google.maps.DirectionsRenderer;
-              }); 
+              });
           }
 
           this.directions.updateRoute();
@@ -103,9 +112,5 @@ export class MapComponent implements OnInit {
         });
 
       });
-    }
-
-    onSubmit({ value, valid }: { value: any, valid: boolean }) {
-      this.directions.findCrags(value.distanceControl);
     }
 }

@@ -1,8 +1,7 @@
 import { Directive, Input, Output } from '@angular/core';
 import { GoogleMapsAPIWrapper }  from '@agm/core';
 import { RouteBoxerService } from '../routeboxer/routeboxer.service';
- 
-declare var google: any;
+import { } from '@types/googlemaps';
 
 @Directive({
   selector: 'sebm-google-map-directions'
@@ -15,8 +14,8 @@ export class DirectionsMapDirective {
   @Input() waypoints: any;
   @Input() directionsDisplay: any;
   private currentRoute: any;
-  private foundLocationMarkers: google.maps.Marker[];
-  private boxpolys: google.maps.Rectangle[];
+  private foundLocationMarkers: google.maps.Marker[] = null;
+  private boxpolys: google.maps.Rectangle[] = null;
   private map: any;
 
   constructor (
@@ -27,21 +26,21 @@ export class DirectionsMapDirective {
   updateRoute() {
     this.gmapsApi.getNativeMap()
       .then(map => {
-        if(!this.originPlaceId || !this.destinationPlaceId ){
+        if(!this.originPlaceId || !this.destinationPlaceId) {
           return;
         }
 
         this.map = map;
         var directionsService = new google.maps.DirectionsService;
         var globalsRef = this;
-        var latLngA = new google.maps.LatLng({lat: this.origin.latitude, lng: this.origin.longitude });
-        var latLngB = new google.maps.LatLng({lat: this.destination.latitude, lng: this.destination.longitude });
+        var latLngA = new google.maps.LatLng(lat: this.origin.latitude, lng: this.origin.longitude);
+        var latLngB = new google.maps.LatLng(lat: this.destination.latitude, lng: this.destination.longitude);
         this.directionsDisplay.setMap(map);
         this.directionsDisplay.setOptions({
             polylineOptions: {
                 strokeWeight: 8,
                 strokeOpacity: 0.7,
-                strokeColor:  '#00468c' 
+                strokeColor:  '#00468c'
             }
         });
 
@@ -50,7 +49,7 @@ export class DirectionsMapDirective {
             origin: {placeId : this.originPlaceId },
             destination: {placeId : this.destinationPlaceId },
             avoidHighways: true,
-            travelMode: google.maps.DirectionsTravelMode.DRIVING
+            travelMode: google.maps.TravelMode.DRIVING
         }, function(response: any, status: any) {
             if (status === 'OK') {
                 globalsRef.currentRoute = response.routes[0];
@@ -72,12 +71,12 @@ export class DirectionsMapDirective {
     // Convert the distance to box around the route from miles to km
     var distance = dist * 1.609344;
 
-    if(this.currentRoute != null) {
-      console.log("route: ");
+    if(this.currentRoute !== null) {
+      console.log('route: ');
       console.log(this.currentRoute);
       var path = this.currentRoute.overview_path;
-      console.log("path: " + path);
-      console.log("distance: " + distance);
+      console.log('path: ' + path);
+      console.log('distance: ' + distance);
       var boxes = this.routeBoxerService.box(path, distance);
 
       this.drawBoxes(boxes);
@@ -86,7 +85,7 @@ export class DirectionsMapDirective {
   }
 
   private clearBoxes() {
-    if (this.boxpolys != null) {
+    if (this.boxpolys !== null) {
       for (var i = 0; i < this.boxpolys.length; i++) {
         this.boxpolys[i].setMap(null);
       }
@@ -95,7 +94,7 @@ export class DirectionsMapDirective {
   }
 
   private clearMarkers() {
-    if (this.foundLocationMarkers != null) {
+    if (this.foundLocationMarkers !== null) {
       for (var i = this.foundLocationMarkers.length - 1; i >= 0; i--) {
         this.foundLocationMarkers[i].setMap(null);
         this.foundLocationMarkers.pop();
@@ -105,7 +104,7 @@ export class DirectionsMapDirective {
 
   // Draw the array of boxes as polylines on the map
   private drawBoxes(boxes: any) {
-    console.log("drawing boxes");
+    console.log('drawing boxes');
     this.boxpolys = new Array(boxes.length);
     for (var i = 0; i < boxes.length; i++) {
       this.boxpolys[i] = new google.maps.Rectangle(
@@ -116,7 +115,7 @@ export class DirectionsMapDirective {
                               strokeWeight: 1,
                               map: this.map
                             } );
-    } 
+    }
   }
 
   private findMarkers(boxes: any) {

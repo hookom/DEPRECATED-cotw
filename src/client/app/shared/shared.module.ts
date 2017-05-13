@@ -17,8 +17,8 @@ import { DirectionsMapDirective } from './map/directions.directive';
 @NgModule({
   imports: [CommonModule, RouterModule,
             AgmCoreModule.forRoot({
-              apiKey: "AIzaSyA-2Qvfc-Qj1sgX0Mpp4FKz8L86d5ycF5U",
-              libraries: ["places"]
+              apiKey: 'AIzaSyA-2Qvfc-Qj1sgX0Mpp4FKz8L86d5ycF5U',
+              libraries: ['places']
             }),
             BrowserModule, FormsModule,
             ReactiveFormsModule],

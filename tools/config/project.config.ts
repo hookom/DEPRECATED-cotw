@@ -48,7 +48,7 @@ export class ProjectConfig extends SeedConfig {
         path: 'node_modules/@agm/core/core.umd.js'
       },
     ];
-    
+
     this.addPackagesBundles(additionalPackages);
 
     /* Add proxy middleware */
