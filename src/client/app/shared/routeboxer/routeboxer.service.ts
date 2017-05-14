@@ -25,7 +25,7 @@ export class RouteBoxerService {
      * @return {google.maps.LatLngBounds[]} An array of boxes that covers the whole
      *           path.
      */
-    box(path: google.maps.LatLng[], range: number): google.maps.LatLngBounds[] {
+    box(path: (google.maps.LatLng[] | google.maps.Polyline), range: number): google.maps.LatLngBounds[] {
         // Two dimensional array representing the cells in the grid overlaid on the path
         this.grid_ = null;
 
@@ -59,10 +59,10 @@ export class RouteBoxerService {
                 }
             } else {
                 // v2 Maps API Polyline object
-                vertices = new Array(path.getVertexCount());
-                for (let j = 0; j < vertices.length; j++) {
-                    vertices[j] = path.getVertex(j);
-                }
+                // vertices = new Array(path.getVertexCount());
+                // for (let j = 0; j < vertices.length; j++) {
+                //     vertices[j] = path.getVertex(j);
+                // }
             }
         }
 
@@ -475,12 +475,12 @@ export class RouteBoxerService {
     };
 
     /**
-     * Obtain the LatLng of the origin of a cell on the grid
+     * Obtain the LatLngBounds of the origin of a cell on the grid
      *
      * @param {Number[]} cell The cell to lookup.
-     * @return {LatLng} The latlng of the origin of the cell.
+     * @return {LatLngBounds} The latlng of the origin of the cell.
      */
-    getCellBounds_(cell: number[]): google.maps.LatLng {
+    getCellBounds_(cell: number[]): google.maps.LatLngBounds {
         return new google.maps.LatLngBounds(
             new google.maps.LatLng(this.latGrid_[cell[1]], this.lngGrid_[cell[0]]),
             new google.maps.LatLng(this.latGrid_[cell[1] + 1], this.lngGrid_[cell[0] + 1]));

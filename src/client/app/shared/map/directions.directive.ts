@@ -33,8 +33,8 @@ export class DirectionsMapDirective {
         this.map = map;
         var directionsService = new google.maps.DirectionsService;
         var globalsRef = this;
-        var latLngA = new google.maps.LatLng(lat: this.origin.latitude, lng: this.origin.longitude);
-        var latLngB = new google.maps.LatLng(lat: this.destination.latitude, lng: this.destination.longitude);
+        var latLngA = new google.maps.LatLng(this.origin.latitude, this.origin.longitude);
+        var latLngB = new google.maps.LatLng(this.destination.latitude, this.destination.longitude);
         this.directionsDisplay.setMap(map);
         this.directionsDisplay.setOptions({
             polylineOptions: {
