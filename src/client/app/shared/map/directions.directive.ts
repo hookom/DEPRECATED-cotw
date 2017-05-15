@@ -165,4 +165,56 @@ export class DirectionsMapDirective {
     // }
   }
 
+//   function showContributed() {
+
+//     var db_locations = null;
+
+//     // Making this synchronous for now as db_locations
+//     // is used immediately after this call. Can alternatively
+//     // block until success callback, but seems the same?
+//     $.ajax({
+//         url: "/lib/db/data.php",
+//         dataType: 'json',
+//         async: false,
+//         success: function(data) {
+//             db_locations = data;
+//         }
+//     });
+
+//     for (var n=0; n < db_locations.length; n++) {
+//         var temp_loc = new google.maps.LatLng(db_locations[n][1], db_locations[n][2]);
+//         var temp_title;
+//         if(db_locations[n][3] == 0) {
+//             temp_title = "(Unverified): " + db_locations[n][0];
+//         } else {
+//             temp_title = db_locations[n][0];
+//         }
+//         var marker = new google.maps.Marker({
+//             position: temp_loc,
+//             map: map,
+//             title: temp_title
+//         });
+
+//         if(db_locations[n][3] == 0) {
+//             marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+//         }
+
+//         foundLocationMarkers.push(marker);
+//     }
+
+// }
+
+// function validate_submission() {
+//     var fields = ["insertName", "insertLat", "insertLong"];
+
+//     for(var i = 0; i < fields.length; i++) {
+//         var fieldVal = document.forms["userSub"][fields[i]].value;
+
+//         if (fieldVal.search(/^\s+$/) != -1) {
+//             alert("Crag Name, Latitude, and Longitude are required.");
+//             return false;
+//         }
+//     }
+// }
+
 }
