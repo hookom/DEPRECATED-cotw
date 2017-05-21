@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { ToolbarComponent } from './toolbar/toolbar.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { MapComponent } from './map/map.component';
-import { RouteBoxerService } from './routeboxer/routeboxer.service';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { MapComponent } from './components/map/map.component';
+import { RouteBoxerService } from './services/routeboxer/routeboxer.service';
 import { AgmCoreModule } from '@agm/core';
-import { DirectionsMapDirective } from './map/directions.directive';
+import { DirectionsMapDirective } from './directives/directions.directive';
+import { DbService } from './services/db/db.service';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -22,15 +22,15 @@ import { DirectionsMapDirective } from './map/directions.directive';
             }),
             BrowserModule, FormsModule,
             ReactiveFormsModule],
-  declarations: [ToolbarComponent, NavbarComponent, MapComponent, DirectionsMapDirective],
-  exports: [ToolbarComponent, NavbarComponent, MapComponent,
+  declarations: [NavbarComponent, MapComponent, DirectionsMapDirective],
+  exports: [NavbarComponent, MapComponent,
     CommonModule, FormsModule, RouterModule]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,
-      providers: [RouteBoxerService]
+      providers: [RouteBoxerService, DbService]
     };
   }
 }

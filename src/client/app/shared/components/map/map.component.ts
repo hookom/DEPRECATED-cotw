@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, 
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { MapsAPILoader, AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
-import { DirectionsMapDirective } from './directions.directive';
+import { DirectionsMapDirective } from '../../directives/directions.directive';
 import { } from '@types/googlemaps';
 
 @Component({

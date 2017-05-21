@@ -1,6 +1,6 @@
 import { Directive, Input, Output } from '@angular/core';
 import { GoogleMapsAPIWrapper }  from '@agm/core';
-import { RouteBoxerService } from '../routeboxer/routeboxer.service';
+import { RouteBoxerService } from '../services/routeboxer/routeboxer.service';
 import { } from '@types/googlemaps';
 
 @Directive({
