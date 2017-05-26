@@ -1,10 +1,14 @@
 import { Directive, Input, Output } from '@angular/core';
 import { GoogleMapsAPIWrapper }  from '@agm/core';
-import { RouteBoxerService } from '../services/routeboxer/routeboxer.service';
 import { } from '@types/googlemaps';
 
+import { RouteBoxerService } from '../services/routeboxer/routeboxer.service';
+import { LocationsService } from '../services/locations/locations.service';
+import { Location } from '../models/location';
+
 @Directive({
-  selector: 'sebm-google-map-directions'
+  selector: 'sebm-google-map-directions',
+  providers: [LocationsService]
 })
 export class DirectionsMapDirective {
   @Input() origin: any ;
@@ -17,10 +21,12 @@ export class DirectionsMapDirective {
   private foundLocationMarkers: google.maps.Marker[] = null;
   private boxpolys: google.maps.Rectangle[] = null;
   private map: any;
+  private locations: Location[];
 
   constructor (
     private gmapsApi: GoogleMapsAPIWrapper,
-    private routeBoxerService: RouteBoxerService
+    private routeBoxerService: RouteBoxerService,
+    private locationsService: LocationsService
   ) {}
 
   updateRoute() {
@@ -119,6 +125,9 @@ export class DirectionsMapDirective {
   }
 
   private findMarkers(boxes: any) {
+    this.locationsService.getLocations();
+
+
     // var db_locations = null;
 
     // Making this synchronous for now as db_locations
