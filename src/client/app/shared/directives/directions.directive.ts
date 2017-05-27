@@ -21,7 +21,8 @@ export class DirectionsMapDirective {
   private foundLocationMarkers: google.maps.Marker[] = null;
   private boxpolys: google.maps.Rectangle[] = null;
   private map: any;
-  private locations: Location[];
+  db_locations: Location[];
+  errorMessage: string;
 
   constructor (
     private gmapsApi: GoogleMapsAPIWrapper,
@@ -83,7 +84,7 @@ export class DirectionsMapDirective {
       var path = this.currentRoute.overview_path;
       console.log('path: ' + path);
       console.log('distance: ' + distance);
-      var boxes = this.routeBoxerService.box(path, distance);
+      let boxes: google.maps.LatLngBounds[] = this.routeBoxerService.box(path, distance);
 
       this.drawBoxes(boxes);
       this.findMarkers(boxes);
@@ -109,7 +110,7 @@ export class DirectionsMapDirective {
   }
 
   // Draw the array of boxes as polylines on the map
-  private drawBoxes(boxes: any) {
+  private drawBoxes(boxes: google.maps.LatLngBounds[]) {
     console.log('drawing boxes');
     this.boxpolys = new Array(boxes.length);
     for (var i = 0; i < boxes.length; i++) {
@@ -124,54 +125,48 @@ export class DirectionsMapDirective {
     }
   }
 
-  private findMarkers(boxes: any) {
-    this.locationsService.getLocations();
+  private findMarkers(boxes: google.maps.LatLngBounds[]) {
+    this.locationsService.getLocations()
+      .subscribe(locations => {
+                                this.db_locations = locations;
+                                console.log("getlocations success");
+                                console.log(locations);
+                                this.placeMarkers(boxes);
+                              },
+                 error =>  this.errorMessage = <any>error
+                );
+  }
 
+  private placeMarkers(boxes: google.maps.LatLngBounds[]) {
+    console.log("Checking " + boxes.length + " boxes for " + this.db_locations.length + " locations")
+    for (let i = 0; i < boxes.length; i++) {
 
-    // var db_locations = null;
+        for (let n = 0; n < this.db_locations.length; n++) {
 
-    // Making this synchronous for now as db_locations
-    // is used immediately after this call. Can alternatively
-    // block until success callback, but seems the same?
-    // $.ajax({
-    //     url: "/lib/db/data.php",
-    //     dataType: 'json',
-    //     async: false,
-    //     success: function(data) {
-    //         db_locations = data;
-    //     }
-    // });
+            var temp_loc = new google.maps.LatLng(this.db_locations[n].lat, this.db_locations[n].lng);
+            if (boxes[i].contains(temp_loc)) {
+console.log("found one");
+                var temp_title;
+                if(this.db_locations[n].verified == 0) {
+                    temp_title = "(Unverified): " + this.db_locations[n].name;
+                } else {
+                    temp_title = this.db_locations[n].name;
+                }
 
-    // var db_locations = <?php echo json_encode($locations); ?>;
+                var marker = new google.maps.Marker({
+                    position: temp_loc,
+                    map: this.map,
+                    title: temp_title
+                });
 
-    // for (var i=0; i < boxes.length; i++) {
+                if(this.db_locations[n].verified == 0) {
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                }
 
-    //     for (var n=0; n < db_locations.length; n++) {
-
-    //         var temp_loc = new google.maps.LatLng(db_locations[n][1], db_locations[n][2]);
-    //         if (boxes[i].contains(temp_loc)) {
-
-    //             var temp_title;
-    //             if(db_locations[n][3] == 0) {
-    //                 temp_title = "(Unverified): " + db_locations[n][0];
-    //             } else {
-    //                 temp_title = db_locations[n][0];
-    //             }
-
-    //             var marker = new google.maps.Marker({
-    //                 position: temp_loc,
-    //                 map: map,
-    //                 title: temp_title
-    //             });
-
-    //             if(db_locations[n][3] == 0) {
-    //                 marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
-    //             }
-
-    //             foundLocationMarkers.push(marker);
-    //         }
-    //     }
-    // }
+                this.foundLocationMarkers.push(marker);
+            }
+        }
+    }
   }
 
 //   function showContributed() {

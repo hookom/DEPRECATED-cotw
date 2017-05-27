@@ -1,7 +1,8 @@
 export class Location {
+  name: string;
   lat: number;
   lng: number;
-  name: string;
+  verified: number;
 
   constructor() {
   }
