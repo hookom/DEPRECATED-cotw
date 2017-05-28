@@ -5,10 +5,12 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
 import { Location } from '../../models/location';
+import { Config } from '../../config/env.config';
 
 @Injectable()
 export class LocationsService {
-    private dataUrl = "http://climbontheway.com/api/data.php";
+    private dataUrl = 'http://www.climbontheway.com/api/get.php';
+    // private dataUrl = 'api/get.php';
 
     constructor(private http: Http) { }
 
