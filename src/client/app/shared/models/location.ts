@@ -1,9 +1,10 @@
 export class Location {
-  name: string;
-  lat: number;
-  lng: number;
-  verified: number;
 
-  constructor() {
-  }
+  constructor(
+    public name: string,
+    public lat: number,
+    public lng: number,
+    public verified: number
+  ) {}
+  
 }

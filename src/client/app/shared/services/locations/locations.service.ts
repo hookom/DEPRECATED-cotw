@@ -16,14 +16,10 @@ export class LocationsService {
 
     getLocations(): Observable<Location[]> {
         return this.http.get(this.dataUrl)
-                    .map(this.extractData)
+                    .map((res:Response) => res.json())
                     .catch(this.handleError);
     }
 
-    private extractData(res: Response) {
-        let body = res.json();
-        return body.data || { };
-    }
     private handleError (error: Response | any) {
         // In a real world app, you might use a remote logging infrastructure
         let errMsg: string;

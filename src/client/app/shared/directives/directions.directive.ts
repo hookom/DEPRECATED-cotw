@@ -79,11 +79,7 @@ export class DirectionsMapDirective {
     var distance = dist * 1.609344;
 
     if(this.currentRoute !== null) {
-      console.log('route: ');
-      console.log(this.currentRoute);
       var path = this.currentRoute.overview_path;
-      console.log('path: ' + path);
-      console.log('distance: ' + distance);
       let boxes: google.maps.LatLngBounds[] = this.routeBoxerService.box(path, distance);
 
       this.drawBoxes(boxes);
@@ -111,7 +107,6 @@ export class DirectionsMapDirective {
 
   // Draw the array of boxes as polylines on the map
   private drawBoxes(boxes: google.maps.LatLngBounds[]) {
-    console.log('drawing boxes');
     this.boxpolys = new Array(boxes.length);
     for (var i = 0; i < boxes.length; i++) {
       this.boxpolys[i] = new google.maps.Rectangle(
@@ -129,7 +124,6 @@ export class DirectionsMapDirective {
     this.locationsService.getLocations()
       .subscribe(locations => {
                                 this.db_locations = locations;
-                                console.log("getlocations success");
                                 console.log(locations);
                                 this.placeMarkers(boxes);
                               },
@@ -142,10 +136,10 @@ export class DirectionsMapDirective {
     for (let i = 0; i < boxes.length; i++) {
 
         for (let n = 0; n < this.db_locations.length; n++) {
-
             var temp_loc = new google.maps.LatLng(this.db_locations[n].lat, this.db_locations[n].lng);
+            console.log(this.db_locations[n].lat);
             if (boxes[i].contains(temp_loc)) {
-console.log("found one");
+                console.log("found one");
                 var temp_title;
                 if(this.db_locations[n].verified == 0) {
                     temp_title = "(Unverified): " + this.db_locations[n].name;
