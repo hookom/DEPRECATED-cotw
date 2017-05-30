@@ -7,6 +7,8 @@ class Db {
 		if(!isset(self::$connection)) {
                         header("Access-Control-Allow-Origin: localhost:5555");
                         header("Access-Control-Allow-Origin: http://localhost:5555");
+						header("Access-Control-Allow-Origin: http://www.climbontheway.com");
+						header("Access-Control-Allow-Origin: http://climbontheway.com");
 
 			$config = parse_ini_file(__DIR__ . '/../../config.ini', true); 
 			self::$connection = new mysqli($config['database']['host'],$config['database']['user'],$config['database']['password'],$config['database']['db']);

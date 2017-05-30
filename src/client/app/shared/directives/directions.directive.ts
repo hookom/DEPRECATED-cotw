@@ -18,10 +18,9 @@ export class DirectionsMapDirective {
   @Input() waypoints: any;
   @Input() directionsDisplay: any;
   private currentRoute: any;
-  private foundLocationMarkers: google.maps.Marker[] = null;
+  private foundLocationMarkers: google.maps.Marker[] = [];
   private boxpolys: google.maps.Rectangle[] = null;
   private map: any;
-  db_locations: Location[];
   errorMessage: string;
 
   constructor (
@@ -123,28 +122,25 @@ export class DirectionsMapDirective {
   private findMarkers(boxes: google.maps.LatLngBounds[]) {
     this.locationsService.getLocations()
       .subscribe(locations => {
-                                this.db_locations = locations;
-                                console.log(locations);
-                                this.placeMarkers(boxes);
+                                this.placeMarkers(boxes, locations);
                               },
                  error =>  this.errorMessage = <any>error
                 );
   }
 
-  private placeMarkers(boxes: google.maps.LatLngBounds[]) {
-    console.log("Checking " + boxes.length + " boxes for " + this.db_locations.length + " locations")
+  private placeMarkers(boxes: google.maps.LatLngBounds[], db_locations: Location[]) {
+    console.log("Checking " + boxes.length + " boxes for " + db_locations.length + " locations")
     for (let i = 0; i < boxes.length; i++) {
 
-        for (let n = 0; n < this.db_locations.length; n++) {
-            var temp_loc = new google.maps.LatLng(this.db_locations[n].lat, this.db_locations[n].lng);
-            console.log(this.db_locations[n].lat);
+        for (let n = 0; n < db_locations.length; n++) {
+            var temp_loc = new google.maps.LatLng(db_locations[n].lat, db_locations[n].long);
+
             if (boxes[i].contains(temp_loc)) {
-                console.log("found one");
                 var temp_title;
-                if(this.db_locations[n].verified == 0) {
-                    temp_title = "(Unverified): " + this.db_locations[n].name;
+                if(db_locations[n].verified == 0) {
+                    temp_title = "(Unverified): " + db_locations[n].name;
                 } else {
-                    temp_title = this.db_locations[n].name;
+                    temp_title = db_locations[n].name;
                 }
 
                 var marker = new google.maps.Marker({
@@ -153,7 +149,7 @@ export class DirectionsMapDirective {
                     title: temp_title
                 });
 
-                if(this.db_locations[n].verified == 0) {
+                if(db_locations[n].verified == 0) {
                     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
                 }
 
