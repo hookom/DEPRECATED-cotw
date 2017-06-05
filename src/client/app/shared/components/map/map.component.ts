@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { MapsAPILoader, AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
+import { MapsAPILoader, AgmCoreModule } from '@agm/core';
 import { } from '@types/googlemaps';
 
 import { DirectionsMapDirective } from '../../directives/directions.directive';
@@ -11,13 +11,15 @@ import { DirectionsMapDirective } from '../../directives/directions.directive';
     selector: 'cotw-map',
     templateUrl: 'map.component.html',
     styleUrls: ['map.component.css'],
-    providers: [GoogleMapsAPIWrapper]
+    providers: []
 })
 
 export class MapComponent implements OnInit {
 
-  public latitude: number;
-  public longitude: number;
+  public orig: any;
+  public dest: any;
+  public lat: number;
+  public long: number;
   public zoom: number;
   public climbSearch: FormGroup;
 
@@ -30,20 +32,18 @@ export class MapComponent implements OnInit {
   @ViewChild(DirectionsMapDirective)
   public directions: DirectionsMapDirective;
 
-  public origin: any;
-  public destination: any;
-
   constructor(
     private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone,
-    private gmapsApi: GoogleMapsAPIWrapper
+    private ngZone: NgZone
   ) {}
 
   ngOnInit() {
+    // this.getNames();
+
     //set google maps defaults
     this.zoom = 4;
-    this.latitude = 39.8282;
-    this.longitude = -98.5795;
+    this.lat = 39.8282;
+    this.long = -98.5795;
 
     this.climbSearch = new FormGroup({
       originSearchControl: new FormControl('', Validators.required),
@@ -73,8 +73,8 @@ export class MapComponent implements OnInit {
   private setCurrentPosition() {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
+        this.lat = position.coords.latitude;
+        this.long = position.coords.longitude;
         this.zoom = 12;
       });
     }

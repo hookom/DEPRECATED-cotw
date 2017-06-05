@@ -11,17 +11,18 @@ import { Location } from '../models/location';
   providers: [LocationsService]
 })
 export class DirectionsMapDirective {
-  @Input() origin: any ;
+  @Input() origin: any;
   @Input() destination: any;
   @Input() originPlaceId: any;
   @Input() destinationPlaceId: any;
-  @Input() waypoints: any;
   @Input() directionsDisplay: any;
+
   private currentRoute: any;
   private foundLocationMarkers: google.maps.Marker[] = [];
   private boxpolys: google.maps.Rectangle[] = null;
   private map: any;
-  errorMessage: string;
+  private errorMessage: string;
+  private db_locations: Location[];
 
   constructor (
     private gmapsApi: GoogleMapsAPIWrapper,
@@ -37,10 +38,10 @@ export class DirectionsMapDirective {
         }
 
         this.map = map;
-        var directionsService = new google.maps.DirectionsService;
-        var globalsRef = this;
-        var latLngA = new google.maps.LatLng(this.origin.latitude, this.origin.longitude);
-        var latLngB = new google.maps.LatLng(this.destination.latitude, this.destination.longitude);
+        let directionsService = new google.maps.DirectionsService;
+        let globalsRef = this;
+        // let latLngA = new google.maps.LatLng(this.origin.latitude, this.origin.longitude);
+        // let latLngB = new google.maps.LatLng(this.destination.latitude, this.destination.longitude);
         this.directionsDisplay.setMap(map);
         this.directionsDisplay.setOptions({
             polylineOptions: {
@@ -60,8 +61,7 @@ export class DirectionsMapDirective {
             if (status === 'OK') {
                 globalsRef.currentRoute = response.routes[0];
                 globalsRef.directionsDisplay.setDirections(response);
-                map.setZoom(30);
-                var point = response.routes[ 0 ].legs[ 0 ];
+                let point = response.routes[ 0 ].legs[ 0 ];
                 console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
             } else {
                 console.log('Directions request failed due to ' + status);
@@ -74,21 +74,26 @@ export class DirectionsMapDirective {
     this.clearBoxes();
     this.clearMarkers();
 
-    // Convert the distance to box around the route from miles to km
-    var distance = dist * 1.609344;
+    let distance = dist * 1.609344;
 
     if(this.currentRoute !== null) {
-      var path = this.currentRoute.overview_path;
+      let path = this.currentRoute.overview_path;
       let boxes: google.maps.LatLngBounds[] = this.routeBoxerService.box(path, distance);
 
-      this.drawBoxes(boxes);
-      this.findMarkers(boxes);
+      this.locationsService.getLocations()
+        .subscribe(locations => {
+                                  this.db_locations = locations;
+                                  this.placeMarkers(boxes);
+                                },
+                    error => this.errorMessage = <any>error);
+
+      // this.drawBoxes(boxes);
     }
   }
 
   private clearBoxes() {
     if (this.boxpolys !== null) {
-      for (var i = 0; i < this.boxpolys.length; i++) {
+      for (let i = 0; i < this.boxpolys.length; i++) {
         this.boxpolys[i].setMap(null);
       }
     }
@@ -97,59 +102,35 @@ export class DirectionsMapDirective {
 
   private clearMarkers() {
     if (this.foundLocationMarkers !== null) {
-      for (var i = this.foundLocationMarkers.length - 1; i >= 0; i--) {
+      for (let i = this.foundLocationMarkers.length - 1; i >= 0; i--) {
         this.foundLocationMarkers[i].setMap(null);
         this.foundLocationMarkers.pop();
       }
     }
   }
 
-  // Draw the array of boxes as polylines on the map
-  private drawBoxes(boxes: google.maps.LatLngBounds[]) {
-    this.boxpolys = new Array(boxes.length);
-    for (var i = 0; i < boxes.length; i++) {
-      this.boxpolys[i] = new google.maps.Rectangle(
-                            { bounds: boxes[i],
-                              fillOpacity: 0,
-                              strokeOpacity: 1.0,
-                              strokeColor: '#000000',
-                              strokeWeight: 1,
-                              map: this.map
-                            } );
-    }
-  }
-
-  private findMarkers(boxes: google.maps.LatLngBounds[]) {
-    this.locationsService.getLocations()
-      .subscribe(locations => {
-                                this.placeMarkers(boxes, locations);
-                              },
-                 error =>  this.errorMessage = <any>error
-                );
-  }
-
-  private placeMarkers(boxes: google.maps.LatLngBounds[], db_locations: Location[]) {
-    console.log("Checking " + boxes.length + " boxes for " + db_locations.length + " locations")
+  private placeMarkers(boxes: google.maps.LatLngBounds[]) {
+    console.log("Checking " + boxes.length + " boxes for " + this.db_locations.length + " locations")
     for (let i = 0; i < boxes.length; i++) {
 
-        for (let n = 0; n < db_locations.length; n++) {
-            var temp_loc = new google.maps.LatLng(db_locations[n].lat, db_locations[n].long);
+        for (let n = 0; n < this.db_locations.length; n++) {
+            let temp_loc = new google.maps.LatLng(this.db_locations[n].lat, this.db_locations[n].long);
 
             if (boxes[i].contains(temp_loc)) {
-                var temp_title;
-                if(db_locations[n].verified == 0) {
-                    temp_title = "(Unverified): " + db_locations[n].name;
+                let temp_title;
+                if(this.db_locations[n].verified == 0) {
+                    temp_title = "(Unverified): " + this.db_locations[n].name;
                 } else {
-                    temp_title = db_locations[n].name;
+                    temp_title = this.db_locations[n].name;
                 }
 
-                var marker = new google.maps.Marker({
+                let marker = new google.maps.Marker({
                     position: temp_loc,
                     map: this.map,
                     title: temp_title
                 });
 
-                if(db_locations[n].verified == 0) {
+                if(this.db_locations[n].verified == 0) {
                     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
                 }
 
@@ -210,5 +191,20 @@ export class DirectionsMapDirective {
 //         }
 //     }
 // }
+
+  // // Draw the array of boxes as polylines on the map
+  // private drawBoxes(boxes: google.maps.LatLngBounds[]) {
+  //   this.boxpolys = new Array(boxes.length);
+  //   for (var i = 0; i < boxes.length; i++) {
+  //     this.boxpolys[i] = new google.maps.Rectangle(
+  //                           { bounds: boxes[i],
+  //                             fillOpacity: 0,
+  //                             strokeOpacity: 1.0,
+  //                             strokeColor: '#000000',
+  //                             strokeWeight: 1,
+  //                             map: this.map
+  //                           } );
+  //   }
+  // }
 
 }

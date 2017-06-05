@@ -11,15 +11,15 @@ describe('App', () => {
   });
 
   it('should have <nav>', () => {
-    expect(element(by.css('climb-app sd-navbar nav')).isPresent()).toEqual(true);
+    expect(element(by.css('cotw-app cotw-navbar nav')).isPresent()).toEqual(true);
   });
 
   it('should have correct nav text for Home', () => {
-    expect(element(by.css('climb-app sd-navbar nav a:first-child')).getText()).toEqual('FIND');
+    expect(element(by.css('cotw-app cotw-navbar nav a:first-child')).getText()).toEqual('FIND');
   });
 
   it('should have correct nav text for Add', () => {
-    expect(element(by.css('climb-app sd-navbar nav a:nth-child(2)')).getText()).toEqual('ADD');
+    expect(element(by.css('cotw-app cotw-navbar nav a:nth-child(2)')).getText()).toEqual('ADD');
   });
 
 });

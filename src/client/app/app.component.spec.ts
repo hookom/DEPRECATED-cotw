@@ -55,7 +55,7 @@ export function main() {
 
 @Component({
   selector: 'test-cmp',
-  template: '<climb-app></climb-app>'
+  template: '<cotw-app></cotw-app>'
 })
 
 class TestComponent {

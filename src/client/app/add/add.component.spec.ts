@@ -34,6 +34,6 @@ export function main() {
 
 @Component({
   selector: 'test-cmp',
-  template: '<sd-add></sd-add>'
+  template: '<cotw-add></cotw-add>'
 })
 class TestComponent {}

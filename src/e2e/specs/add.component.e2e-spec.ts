@@ -7,7 +7,7 @@ describe('Add', () => {
   });
 
   it('should have correct feature heading', () => {
-    expect(element(by.css('sd-add h2')).getText()).toEqual('Features');
+    expect(element(by.css('cotw-add h2')).getText()).toEqual('Features');
   });
 
 });

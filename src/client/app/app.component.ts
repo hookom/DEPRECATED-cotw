@@ -7,7 +7,7 @@ import './operators';
  */
 @Component({
   moduleId: module.id,
-  selector: 'climb-app',
+  selector: 'cotw-app',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.css'],
 })
