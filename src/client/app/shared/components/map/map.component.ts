@@ -38,9 +38,6 @@ export class MapComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.getNames();
-
-    //set google maps defaults
     this.zoom = 4;
     this.lat = 39.8282;
     this.long = -98.5795;
@@ -51,7 +48,11 @@ export class MapComponent implements OnInit {
       distanceControl: new FormControl('', Validators.required)
     });
 
-    this.setCurrentPosition();
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.setMapFocus(position.coords.latitude, position.coords.longitude);
+      });
+    }
 
     this.mapsAPILoader.load().then(() => {
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
@@ -70,14 +71,10 @@ export class MapComponent implements OnInit {
     this.directions.findCrags(value.distanceControl);
   }
 
-  private setCurrentPosition() {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.lat = position.coords.latitude;
-        this.long = position.coords.longitude;
-        this.zoom = 12;
-      });
-    }
+  private setMapFocus(lat: number, long: number) {
+    this.lat = lat;
+    this.long = long;
+    this.zoom = 12;
   }
 
   private setupPlaceChangedListener(autocomplete: any, mode: any ) {
@@ -87,6 +84,7 @@ export class MapComponent implements OnInit {
           if (place.geometry === undefined) {
             return;
           }
+
           if (mode === 'ORG') {
             this.directions.origin = {
               longitude: place.geometry.location.lng(),
@@ -101,6 +99,8 @@ export class MapComponent implements OnInit {
             this.directions.destinationPlaceId = place.place_id;
           }
 
+          this.setMapFocus(place.geometry.location.lat(), place.geometry.location.lng());
+
           if(this.directions.directionsDisplay === undefined) {
             this.mapsAPILoader.load()
               .then(() => {
@@ -109,7 +109,6 @@ export class MapComponent implements OnInit {
           }
 
           this.directions.updateRoute();
-          this.zoom = 12;
         });
 
       });
