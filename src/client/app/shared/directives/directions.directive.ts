@@ -40,8 +40,7 @@ export class DirectionsMapDirective {
         this.map = map;
         let directionsService = new google.maps.DirectionsService;
         let globalsRef = this;
-        // let latLngA = new google.maps.LatLng(this.origin.latitude, this.origin.longitude);
-        // let latLngB = new google.maps.LatLng(this.destination.latitude, this.destination.longitude);
+
         this.directionsDisplay.setMap(map);
         this.directionsDisplay.setOptions({
             polylineOptions: {
@@ -124,10 +123,19 @@ export class DirectionsMapDirective {
                     temp_title = this.db_locations[n].name;
                 }
 
+                var infowindow = new google.maps.InfoWindow({
+                  content: temp_title,
+                  maxWidth: 200
+                });
+
                 let marker = new google.maps.Marker({
                     position: temp_loc,
                     map: this.map,
                     title: temp_title
+                });
+
+                marker.addListener('click', function() {
+                  infowindow.open(this.map, marker);
                 });
 
                 if(this.db_locations[n].verified == 0) {
