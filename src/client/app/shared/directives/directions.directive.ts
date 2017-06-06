@@ -123,7 +123,7 @@ export class DirectionsMapDirective {
                     temp_title = this.db_locations[n].name;
                 }
 
-                var infowindow = new google.maps.InfoWindow({
+                let infowindow = new google.maps.InfoWindow({
                   content: temp_title,
                   maxWidth: 200
                 });
