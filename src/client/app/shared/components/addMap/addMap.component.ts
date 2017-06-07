@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, NgZone, ViewChild, NgModule, Directive, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { MapsAPILoader, AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
+import { MapsAPILoader, AgmCoreModule } from '@agm/core';
 import { } from '@types/googlemaps';
 
 import { LocationsService } from '../../services/locations/locations.service';
@@ -29,18 +29,12 @@ export class AddMapComponent implements OnInit {
   public originSearchElementRef: ElementRef;
 
   constructor(
-    private gmapsApi: GoogleMapsAPIWrapper,
     private locationsService: LocationsService,
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone
   ) {}
 
   ngOnInit() {
-    this.gmapsApi.getNativeMap()
-      .then(map => {
-        this.map = map;
-      });
-
     this.locationsService.getLocations()
         .subscribe(locations => {
                                   this.db_locations = locations;
@@ -53,7 +47,7 @@ export class AddMapComponent implements OnInit {
     this.long = -98.5795;
 
     this.climbUpload = new FormGroup({
-      originSearchControl: new FormControl('', Validators.required),
+      nearbySearchControl: new FormControl('', Validators.required),
       distanceControl: new FormControl('', Validators.required)
     });
 

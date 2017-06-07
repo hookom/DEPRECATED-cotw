@@ -101,13 +101,7 @@ export class FindMapComponent implements OnInit {
 
           this.setMapFocus(place.geometry.location.lat(), place.geometry.location.lng());
 
-          if(this.directions.directionsDisplay === undefined) {
-            this.mapsAPILoader.load()
-              .then(() => {
-                this.directions.directionsDisplay = new google.maps.DirectionsRenderer;
-              });
-          }
-
+          this.directions.directionsDisplay = new google.maps.DirectionsRenderer;
           this.directions.updateRoute();
         });
 
