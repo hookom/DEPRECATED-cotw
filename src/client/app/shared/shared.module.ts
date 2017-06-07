@@ -7,7 +7,8 @@ import { AgmCoreModule } from '@agm/core';
 import { HttpModule } from '@angular/http';
 
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { MapComponent } from './components/map/map.component';
+import { FindMapComponent } from './components/findMap/findMap.component';
+import { AddMapComponent } from './components/addMap/addMap.component';
 import { RouteBoxerService } from './services/routeboxer/routeboxer.service';
 import { DirectionsMapDirective } from './directives/directions.directive';
 import { LocationsService } from './services/locations/locations.service';
@@ -24,9 +25,9 @@ import { LocationsService } from './services/locations/locations.service';
             }),
             BrowserModule, FormsModule,
             ReactiveFormsModule, HttpModule],
-  declarations: [NavbarComponent, MapComponent, DirectionsMapDirective],
-  exports: [NavbarComponent, MapComponent,
-    CommonModule, FormsModule, RouterModule]
+  declarations: [NavbarComponent, AddMapComponent, FindMapComponent, DirectionsMapDirective],
+  exports: [NavbarComponent, AddMapComponent, FindMapComponent,
+            CommonModule, FormsModule, RouterModule]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {

@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="form-group">
+    <form (ngSubmit)="onSubmit(climbUpload)" [formGroup]="climbUpload">
+      <input placeholder="nearby location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #nearbySearch formControlName="nearbySearchControl">
+      <input placeholder="distance out of way" type="number" class="form-control" formControlName="distanceControl">
+      <button type="submit" [disabled]="climbUpload.invalid">Find</button>
+    </form>
+  </div>
+  <agm-map [latitude]="lat" [longitude]="long" [scrollwheel]="false" [zoom]="zoom">
+  </agm-map>
+</div>

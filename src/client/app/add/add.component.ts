@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
 
-/**
- * This class represents the lazy loaded AddComponent.
- */
 @Component({
   moduleId: module.id,
   selector: 'cotw-add',

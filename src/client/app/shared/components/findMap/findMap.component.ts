@@ -8,13 +8,13 @@ import { DirectionsMapDirective } from '../../directives/directions.directive';
 
 @Component({
     moduleId: module.id,
-    selector: 'cotw-map',
-    templateUrl: 'map.component.html',
-    styleUrls: ['map.component.css'],
+    selector: 'cotw-find-map',
+    templateUrl: 'findMap.component.html',
+    styleUrls: ['findMap.component.css'],
     providers: []
 })
 
-export class MapComponent implements OnInit {
+export class FindMapComponent implements OnInit {
 
   public orig: any;
   public dest: any;
