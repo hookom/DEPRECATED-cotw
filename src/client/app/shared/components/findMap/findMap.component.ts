@@ -22,6 +22,7 @@ export class FindMapComponent implements OnInit {
   public long: number;
   public zoom: number;
   public climbSearch: FormGroup;
+  public map: google.maps.Map;
 
   @ViewChild('originSearch')
   public originSearchElementRef: ElementRef;
@@ -55,6 +56,12 @@ export class FindMapComponent implements OnInit {
     }
 
     this.mapsAPILoader.load().then(() => {
+    let mapProp = {
+            center: new google.maps.LatLng(39.8282, -98.5795),
+            zoom: 4,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+    this.map = new google.maps.Map(document.getElementById("map-container"), mapProp);
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
       });
