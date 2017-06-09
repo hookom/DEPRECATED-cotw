@@ -39,29 +39,21 @@ export class FindMapComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.zoom = 4;
-    this.lat = 39.8282;
-    this.long = -98.5795;
-
     this.climbSearch = new FormGroup({
       originSearchControl: new FormControl('', Validators.required),
       destSearchControl: new FormControl('', Validators.required),
       distanceControl: new FormControl('', Validators.required)
     });
 
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.setMapFocus(position.coords.latitude, position.coords.longitude);
-      });
-    }
-
     this.mapsAPILoader.load().then(() => {
-    let mapProp = {
-            center: new google.maps.LatLng(39.8282, -98.5795),
-            zoom: 4,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-    this.map = new google.maps.Map(document.getElementById("map-container"), mapProp);
+      let mapConfig = {
+              center: new google.maps.LatLng(39.8282, -98.5795),
+              zoom: 4,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+      this.map = new google.maps.Map(document.getElementById("map-container"), mapConfig);
+      this.directions.map = this.map;
+
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
       });
@@ -72,6 +64,12 @@ export class FindMapComponent implements OnInit {
       this.setupPlaceChangedListener(originAutocomplete, 'ORG');
       this.setupPlaceChangedListener(destAutocomplete, 'DES');
     });
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.setMapFocus(position.coords.latitude, position.coords.longitude);
+      });
+    }
   }
 
   onSubmit({ value, valid }: { value: any, valid: boolean }) {
@@ -79,9 +77,8 @@ export class FindMapComponent implements OnInit {
   }
 
   private setMapFocus(lat: number, long: number) {
-    this.lat = lat;
-    this.long = long;
-    this.zoom = 12;
+    this.map.setCenter(new google.maps.LatLng(lat, long));
+    this.map.setZoom(12);
   }
 
   private setupPlaceChangedListener(autocomplete: any, mode: any ) {

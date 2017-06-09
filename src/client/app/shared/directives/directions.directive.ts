@@ -1,5 +1,5 @@
 import { Directive, Input, Output } from '@angular/core';
-import { GoogleMapsAPIWrapper }  from '@agm/core';
+import { }  from '@agm/core';
 import { } from '@types/googlemaps';
 
 import { RouteBoxerService } from '../services/routeboxer/routeboxer.service';
@@ -13,60 +13,55 @@ import { Location } from '../models/location';
 export class DirectionsMapDirective {
   @Input() origin: any;
   @Input() destination: any;
-  @Input() originPlaceId: any;
-  @Input() destinationPlaceId: any;
-  @Input() directionsDisplay: any;
+  public originPlaceId: any;
+  public destinationPlaceId: any;
+  public directionsDisplay: any;
+  public map: google.maps.Map;
 
   private currentRoute: any;
   private foundLocationMarkers: google.maps.Marker[] = [];
   private boxpolys: google.maps.Rectangle[] = null;
-  private map: any;
   private errorMessage: string;
   private db_locations: Location[];
 
   constructor (
-    private gmapsApi: GoogleMapsAPIWrapper,
     private routeBoxerService: RouteBoxerService,
     private locationsService: LocationsService
   ) {}
 
   updateRoute() {
-    this.gmapsApi.getNativeMap()
-      .then(map => {
-        if(!this.originPlaceId || !this.destinationPlaceId) {
-          return;
-        }
+      if(!this.originPlaceId || !this.destinationPlaceId) {
+        return;
+      }
 
-        this.map = map;
-        let directionsService = new google.maps.DirectionsService;
-        let globalsRef = this;
+      let directionsService = new google.maps.DirectionsService;
+      let globalsRef = this;
 
-        this.directionsDisplay.setMap(map);
-        this.directionsDisplay.setOptions({
-            polylineOptions: {
-                strokeWeight: 8,
-                strokeOpacity: 0.7,
-                strokeColor:  '#00468c'
-            }
-        });
+      this.directionsDisplay.setMap(this.map);
+      this.directionsDisplay.setOptions({
+          polylineOptions: {
+              strokeWeight: 8,
+              strokeOpacity: 0.7,
+              strokeColor:  '#00468c'
+          }
+      });
 
-        this.directionsDisplay.setDirections({routes: []});
-        directionsService.route({
-            origin: {placeId : this.originPlaceId },
-            destination: {placeId : this.destinationPlaceId },
-            avoidHighways: true,
-            travelMode: google.maps.TravelMode.DRIVING
-        }, function(response: any, status: any) {
-            if (status === 'OK') {
-                globalsRef.currentRoute = response.routes[0];
-                globalsRef.directionsDisplay.setDirections(response);
-                let point = response.routes[ 0 ].legs[ 0 ];
-                console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
-            } else {
-                console.log('Directions request failed due to ' + status);
-            }
-        });
-    });
+      this.directionsDisplay.setDirections({routes: []});
+      directionsService.route({
+          origin: {placeId : this.originPlaceId },
+          destination: {placeId : this.destinationPlaceId },
+          avoidHighways: true,
+          travelMode: google.maps.TravelMode.DRIVING
+      }, function(response: any, status: any) {
+          if (status === 'OK') {
+              globalsRef.currentRoute = response.routes[0];
+              globalsRef.directionsDisplay.setDirections(response);
+              let point = response.routes[ 0 ].legs[ 0 ];
+              console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
+          } else {
+              console.log('Directions request failed due to ' + status);
+          }
+      });
   }
 
   findCrags(dist: number) {
