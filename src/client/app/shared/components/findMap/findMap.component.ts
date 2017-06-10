@@ -51,6 +51,12 @@ export class FindMapComponent implements OnInit {
       this.map = new google.maps.Map(document.getElementById("map-container"), mapConfig);
       this.directions.map = this.map;
 
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          this.setMapFocus(position.coords.latitude, position.coords.longitude);
+        });
+      }
+
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
       });
@@ -61,12 +67,6 @@ export class FindMapComponent implements OnInit {
       this.setupPlaceChangedListener(originAutocomplete, 'ORG');
       this.setupPlaceChangedListener(destAutocomplete, 'DES');
     });
-
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.setMapFocus(position.coords.latitude, position.coords.longitude);
-      });
-    }
   }
 
   onSubmit({ value, valid }: { value: any, valid: boolean }) {

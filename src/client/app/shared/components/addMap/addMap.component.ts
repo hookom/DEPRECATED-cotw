@@ -33,26 +33,30 @@ export class AddMapComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.locationsService.getLocations()
-        .subscribe(locations => {
-                                  this.db_locations = locations;
-                                  this.placeMarkers();
-                                },
-                    error => this.errorMessage = <any>error);
-
     this.climbUpload = new FormGroup({
-      nearbySearchControl: new FormControl('', Validators.required),
-      distanceControl: new FormControl('', Validators.required)
+      nearbySearchControl: new FormControl(''),
+      cragNameControl: new FormControl('', Validators.required),
+      latControl: new FormControl('', Validators.required),
+      longControl: new FormControl('', Validators.required),
+      userNameControl: new FormControl(''),
+      userLocationControl: new FormControl('')
     });
 
-    let mapConfig = {
-            center: new google.maps.LatLng(39.8282, -98.5795),
-            zoom: 4,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-    this.map = new google.maps.Map(document.getElementById("map-container"), mapConfig);
-
     this.mapsAPILoader.load().then(() => {
+      let mapConfig = {
+              center: new google.maps.LatLng(39.8282, -98.5795),
+              zoom: 4,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+      this.map = new google.maps.Map(document.getElementById("map-container"), mapConfig);
+
+      this.locationsService.getLocations()
+          .subscribe(locations => {
+                                    this.db_locations = locations;
+                                    this.placeMarkers();
+                                  },
+                     error => this.errorMessage = <any>error);
+
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
       });
@@ -71,11 +75,14 @@ export class AddMapComponent implements OnInit {
   }
 
   onSubmit({ value, valid }: { value: any, valid: boolean }) {
-  }
-
-  private setMapFocus(lat: number, long: number) {
-    this.map.setCenter(new google.maps.LatLng(lat, long));
-    this.map.setZoom(12);
+    console.log('upload');
+    this.locationsService.addLocation(value.cragNameControl,
+                                      value.latControl,
+                                      value.longControl,
+                                      value.userNameControl,
+                                      value.userLocationControl)
+      .subscribe(loc  => console.log(loc),
+                 error =>  this.errorMessage = <any>error);
   }
 
   private placeMarkers() {
@@ -108,5 +115,10 @@ export class AddMapComponent implements OnInit {
           marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
       }
     }
+  }
+
+  private setMapFocus(lat: number, long: number) {
+    this.map.setCenter(new google.maps.LatLng(lat, long));
+    this.map.setZoom(12);
   }
 }
