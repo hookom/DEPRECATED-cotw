@@ -1,5 +1,4 @@
 import { Directive, Input, Output } from '@angular/core';
-import { }  from '@agm/core';
 import { } from '@types/googlemaps';
 
 import { RouteBoxerService } from '../services/routeboxer/routeboxer.service';
@@ -10,9 +9,11 @@ import { Location } from '../models/location';
   selector: 'sebm-google-map-directions',
   providers: [LocationsService]
 })
+
 export class DirectionsMapDirective {
   @Input() origin: any;
   @Input() destination: any;
+
   public originPlaceId: any;
   public destinationPlaceId: any;
   public directionsDisplay: any;
@@ -79,7 +80,7 @@ export class DirectionsMapDirective {
                                   this.db_locations = locations;
                                   this.placeMarkers(boxes);
                                 },
-                    error => this.errorMessage = <any>error);
+                   error => this.errorMessage = <any>error);
 
       // this.drawBoxes(boxes);
     }

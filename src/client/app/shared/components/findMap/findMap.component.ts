@@ -18,9 +18,6 @@ export class FindMapComponent implements OnInit {
 
   public orig: any;
   public dest: any;
-  public lat: number;
-  public long: number;
-  public zoom: number;
   public climbSearch: FormGroup;
   public map: google.maps.Map;
 
