@@ -75,14 +75,13 @@ export class AddMapComponent implements OnInit {
   }
 
   onSubmit({ value, valid }: { value: any, valid: boolean }) {
-    console.log('upload');
     this.locationsService.addLocation(value.cragNameControl,
                                       value.latControl,
                                       value.longControl,
                                       value.userNameControl,
                                       value.userLocationControl)
-      .subscribe(loc  => console.log(loc),
-                 error =>  this.errorMessage = <any>error);
+      .subscribe(loc => console.log('component sub: ' + loc),
+                 error => this.errorMessage = <any>error);
   }
 
   private placeMarkers() {

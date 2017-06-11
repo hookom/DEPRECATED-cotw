@@ -5,7 +5,6 @@
 		public function connect() {
 
 			if(!isset(self::$connection)) {
-				header("Access-Control-Allow-Origin: *");
 
 				$config = parse_ini_file(__DIR__ . '/../../config.ini', true); 
 				self::$connection = new mysqli($config['database']['host'],$config['database']['user'],$config['database']['password'],$config['database']['db']);

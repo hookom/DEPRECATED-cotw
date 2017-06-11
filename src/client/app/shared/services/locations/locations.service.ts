@@ -21,16 +21,15 @@ export class LocationsService {
 
     addLocation(crag: string, lat: number, long: number, name: string, loc: string): Observable<Location[]> {
 
-        let obj = { crag: crag, lat: lat, long: long, name: name, loc: loc };
+        let obj = { name: crag, lat: lat, long: long, submitter: name, home: loc };
         let body = 'data=' + JSON.stringify(obj);
-        console.log('json: ' + body);
+        console.log('body: ' + body);
 
-        // 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8'
-        let headers = new Headers({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
         let options = new RequestOptions({ headers: headers });
 
         return this.http.post(this.postUrl, body, options)
-                        .map((res:Response) => {res.json();console.log(res.json());})
+                        .map((res:Response) => console.log('post response: ' + res.json()))
                         .catch(this.handleError);
     }
 

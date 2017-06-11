@@ -6,7 +6,7 @@
     $lat = $request->lat;
     $long = $request->long;
     $submitter = $request->submitter;
-    $home = $request->$home;
+    $home = $request->home;
     $verified = 0;
 
     $db = new Db();
