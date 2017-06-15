@@ -1,3 +1,22 @@
+.form-group {
+    margin: 10px 1px;
+}
+
 #map-container {
-    height: 300px;
+    height: 400px;
+    width: 90%;
+    margin: auto;
+}
+
+input.searchInput[type=text] {
+    background-image: url('../../assets/searchicon.png');
+    background-position: 10px 10px; 
+    background-repeat: no-repeat;
+    padding: 8px 20px 8px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input.searchInput:focus {
+    width: 400px;
 }

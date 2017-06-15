@@ -1,13 +1,11 @@
-<div class="container">
-  <div class="form-group">
-    <form (ngSubmit)="onSubmit(climbSearch)" [formGroup]="climbSearch">
-      <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #originSearch formControlName="originSearchControl">
-      <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #destSearch formControlName="destSearchControl">
-      <input placeholder="distance out of way" type="number" class="form-control" formControlName="distanceControl">
-      <button type="submit" [disabled]="climbSearch.invalid">Find</button>
-    </form>
-  </div>
+<div class="form-group">
+  <form (ngSubmit)="onSubmit(climbSearch)" [formGroup]="climbSearch">
+    <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #originSearch formControlName="originSearchControl">
+    <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #destSearch formControlName="destSearchControl">
+    <input placeholder="distance out of way" type="number" class="form-control" formControlName="distanceControl">
+    <button type="submit" [disabled]="climbSearch.invalid">Find</button>
+  </form>
 </div>
 <div id="map-container">
-    <sebm-google-map-directions [origin]="orig" [destination]="dest"></sebm-google-map-directions>
+  <sebm-google-map-directions [origin]="orig" [destination]="dest"></sebm-google-map-directions>
 </div>

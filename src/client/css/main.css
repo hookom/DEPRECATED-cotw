@@ -45,11 +45,13 @@ li {
 }
 
 input {
-  border: 1px solid #106cc8;
+  border: 2px solid #ccc;
+  border-radius: 4px;
   font-size: 14px;
-  height: 40px;
+  height: 30px;
   outline: none;
   padding: 8px;
+  margin: 2px;
 }
 
 button {
