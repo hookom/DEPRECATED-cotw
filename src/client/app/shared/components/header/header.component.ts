@@ -7,9 +7,4 @@ import { ShareButtonsModule } from 'ngx-sharebuttons';
   templateUrl: 'header.component.html',
   styleUrls: ['header.component.css'],
 })
-export class HeaderComponent {
-  totalShare: number = 0;
-  sumCounts(count: number){
-    this.totalShare += count;
-  }
-}
+export class HeaderComponent {}

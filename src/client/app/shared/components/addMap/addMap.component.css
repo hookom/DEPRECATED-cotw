@@ -1,11 +1,15 @@
 .form-group {
-    margin: 10px 1px;
+    width: 90%;
+    margin: auto;
+    margin-bottom: 4px;
 }
 
 #map-container {
     height: 400px;
     width: 90%;
     margin: auto;
+    border: 2px solid #ccc;
+    border-radius: 4px;
 }
 
 input.searchInput[type=text] {
