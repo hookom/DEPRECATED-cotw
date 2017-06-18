@@ -4,10 +4,6 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  display: flex;
-  flex: 1 1 100%;
-  flex-flow: column;
-  background-color: #353835;
   flex-direction: column;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 16px;

@@ -4,8 +4,20 @@
   display: block;
 }
 
-div {
-  margin: auto;
-  width: 50%;
+.header {
+  width: 80%;
+  height: 70px;
+}
+
+.title {
+  height: 70px;
+  width: 90%;
+  padding: 10px;
+  float: left;
+}
+
+.social {
+  height: 70px;
+  margin-left: 90%;
   padding: 10px;
 }
