@@ -6,7 +6,7 @@
     <input placeholder="longitude" type="number" class="form-control" formControlName="longControl">
     <input placeholder="your name" type="text" class="form-control" formControlName="userNameControl">
     <input placeholder="your location" type="text" class="form-control" formControlName="userLocationControl">
-    <button type="submit" [disabled]="climbUpload.invalid">Find</button>
+    <button class="formButton" type="submit" [disabled]="climbUpload.invalid">Find</button>
   </form>
 </div>
 <div id="map-container"></div>

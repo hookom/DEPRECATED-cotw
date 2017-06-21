@@ -44,7 +44,7 @@ input {
   padding: 8px;
 }
 
-button {
+button.formButton {
   background-color: #106cc8;
   border-style: none;
   color: rgba(255, 255, 255, 0.87);
@@ -58,6 +58,6 @@ button {
   border-radius: 4px;
 }
 
-button:hover {
+button.formButton:hover {
   background-color: #28789e;
 }

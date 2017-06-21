@@ -22,6 +22,7 @@ export class AddMapComponent implements OnInit {
   private errorMessage: string;
   private db_locations: Location[];
   private map: any;
+  private temp_marker: google.maps.Marker;
 
   @ViewChild('nearbySearch')
   public originSearchElementRef: ElementRef;
@@ -46,7 +47,8 @@ export class AddMapComponent implements OnInit {
       let mapConfig = {
               center: new google.maps.LatLng(39.8282, -98.5795),
               zoom: 4,
-              mapTypeId: google.maps.MapTypeId.ROADMAP
+              mapTypeId: google.maps.MapTypeId.ROADMAP,
+              draggableCursor: 'crosshair'
           };
       this.map = new google.maps.Map(document.getElementById("map-container"), mapConfig);
 
@@ -56,6 +58,23 @@ export class AddMapComponent implements OnInit {
                                     this.placeMarkers();
                                   },
                      error => this.errorMessage = <any>error);
+
+      this.map.addListener('click', function(event: any) {
+          if(this.temp_marker) {
+              this.temp_marker.setMap(null);
+          }
+          let tempLat = event.latLng.lat();
+          let tempLng = event.latLng.lng();
+          let tempLoc = new google.maps.LatLng(tempLat, tempLng);
+          console.log('' + tempLoc);
+          // this.climbUpload.patchValue({latControl: tempLat});
+          // this.climbUpload.longControl.setValue(tempLng);
+          this.temp_marker = new google.maps.Marker({
+              position: tempLoc,
+              map: this.map,
+              // title: this.climbUpload.cragNameControl.value()
+          });
+      });
 
       let originAutocomplete = new google.maps.places.Autocomplete(this.originSearchElementRef.nativeElement, {
         types: []
