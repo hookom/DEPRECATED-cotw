@@ -16,9 +16,7 @@ import { Location } from '../../models/location';
 })
 
 export class AddMapComponent implements OnInit {
-
-  public climbUpload: FormGroup;
-
+  private climbUpload: FormGroup;
   private errorMessage: string;
   private db_locations: Location[];
   private map: any;
@@ -55,24 +53,31 @@ export class AddMapComponent implements OnInit {
       this.locationsService.getLocations()
           .subscribe(locations => {
                                     this.db_locations = locations;
-                                    this.placeMarkers();
+                                    this.initMarkers();
                                   },
                      error => this.errorMessage = <any>error);
 
+      let globalsRef = this;
       this.map.addListener('click', function(event: any) {
-          if(this.temp_marker) {
-              this.temp_marker.setMap(null);
+          if(globalsRef.temp_marker) {
+              globalsRef.temp_marker.setMap(null);
           }
           let tempLat = event.latLng.lat();
           let tempLng = event.latLng.lng();
           let tempLoc = new google.maps.LatLng(tempLat, tempLng);
-          console.log('' + tempLoc);
-          // this.climbUpload.patchValue({latControl: tempLat});
-          // this.climbUpload.longControl.setValue(tempLng);
-          this.temp_marker = new google.maps.Marker({
+
+          globalsRef.climbUpload.patchValue(
+            {
+              latControl: tempLat,
+              longControl: tempLng
+            },
+            {onlySelf: true}
+          );
+
+          globalsRef.temp_marker = new google.maps.Marker({
               position: tempLoc,
-              map: this.map,
-              // title: this.climbUpload.cragNameControl.value()
+              map: globalsRef.map,
+              icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
           });
       });
 
@@ -99,39 +104,57 @@ export class AddMapComponent implements OnInit {
                                       value.longControl,
                                       value.userNameControl,
                                       value.userLocationControl)
-      .subscribe(loc => console.log('component sub: ' + loc),
+      .subscribe(loc => {
+                          // why can't I just pass loc to placeMarker() ?
+                          let newLoc: Location = {
+                            name: value.cragNameControl,
+                            lat: value.latControl,
+                            long: value.longControl,
+                            verified: 0,
+                            submitter: value.userNameControl,
+                            home: value.userLocationControl
+                          };
+                          this.placeMarker(newLoc);
+                          this.db_locations.push(newLoc);
+                          this.climbUpload.reset();
+                          this.temp_marker.setMap(null);
+                        },
                  error => this.errorMessage = <any>error);
   }
 
-  private placeMarkers() {
+  private initMarkers() {
     for (let n = 0; n < this.db_locations.length; n++) {
-      let temp_loc = new google.maps.LatLng(this.db_locations[n].lat, this.db_locations[n].long);
+      this.placeMarker(this.db_locations[n]);
+    }
+  }
 
-      let temp_title;
-      if(this.db_locations[n].verified == 0) {
-          temp_title = "(Unverified): " + this.db_locations[n].name;
-      } else {
-          temp_title = this.db_locations[n].name;
-      }
+  private placeMarker(loc: Location) {
+    let temp_loc = new google.maps.LatLng(loc.lat, loc.long);
 
-      let infowindow = new google.maps.InfoWindow({
-        content: temp_title,
-        maxWidth: 200
-      });
+    let temp_title;
+    if(loc.verified == 0) {
+        temp_title = "(Unverified): " + loc.name;
+    } else {
+        temp_title = loc.name;
+    }
 
-      let marker = new google.maps.Marker({
-          position: temp_loc,
-          map: this.map,
-          title: temp_title
-      });
+    let infowindow = new google.maps.InfoWindow({
+      content: temp_title,
+      maxWidth: 200
+    });
 
-      marker.addListener('click', function() {
-        infowindow.open(this.map, marker);
-      });
+    let marker = new google.maps.Marker({
+        position: temp_loc,
+        map: this.map,
+        title: temp_title
+    });
 
-      if(this.db_locations[n].verified == 0) {
-          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
-      }
+    marker.addListener('click', function() {
+      infowindow.open(this.map, marker);
+    });
+
+    if(loc.verified == 0) {
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
     }
   }
 

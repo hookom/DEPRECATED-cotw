@@ -19,7 +19,7 @@ export class LocationsService {
                     .catch(this.handleError);
     }
 
-    addLocation(crag: string, lat: number, long: number, name: string, loc: string): Observable<Location[]> {
+    addLocation(crag: string, lat: number, long: number, name: string, loc: string): Observable<Location> {
 
         let obj = { name: crag, lat: lat, long: long, submitter: name, home: loc };
         let body = 'data=' + JSON.stringify(obj);
