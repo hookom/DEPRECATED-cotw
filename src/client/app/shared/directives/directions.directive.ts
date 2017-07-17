@@ -14,59 +14,97 @@ export class DirectionsMapDirective {
   @Input() origin: any;
   @Input() destination: any;
 
+  public map: google.maps.Map;
   public originPlaceId: any;
   public destinationPlaceId: any;
-  public directionsDisplay: any;
-  public map: google.maps.Map;
 
+  private directionsService: any;
+  private directionsDisplay: any;
   private currentRoute: any;
   private foundLocationMarkers: google.maps.Marker[] = [];
   private boxpolys: google.maps.Rectangle[] = null;
   private errorMessage: string;
   private db_locations: Location[];
+  // private waypoints: any[];
 
   constructor (
     private routeBoxerService: RouteBoxerService,
     private locationsService: LocationsService
   ) {}
 
-  updateRoute() {
+  drawRoute() {
       if(!this.originPlaceId || !this.destinationPlaceId) {
         return;
       }
+console.log('drawing');
+      if (!this.directionsService) {
+        this.directionsService = new google.maps.DirectionsService;
+      } else {
+        // this.waypoints = [];
+        this.clearMarkers();
+      }
 
-      let directionsService = new google.maps.DirectionsService;
-      let globalsRef = this;
+      if (this.directionsDisplay) {
+        this.directionsDisplay.setMap(null);
+        this.directionsDisplay = null;
+      }
 
-      this.directionsDisplay.setMap(this.map);
-      this.directionsDisplay.setOptions({
-          polylineOptions: {
-              strokeWeight: 8,
-              strokeOpacity: 0.7,
-              strokeColor:  '#00468c'
-          }
+      this.directionsDisplay = new google.maps.DirectionsRenderer({
+        map: this.map,
+        polylineOptions: {
+            strokeWeight: 8,
+            strokeOpacity: 0.7,
+            strokeColor:  '#00468c'
+        },
+        draggable: true
       });
 
-      this.directionsDisplay.setDirections({routes: []});
-      directionsService.route({
+      this.waypointChangeListener();
+
+      this.directionsService.route({
           origin: {placeId : this.originPlaceId },
           destination: {placeId : this.destinationPlaceId },
-          avoidHighways: true,
+          // waypoints: this.waypoints,
           travelMode: google.maps.TravelMode.DRIVING
-      }, function(response: any, status: any) {
+      }, (response: any, status: any) => {
           if (status === 'OK') {
-              globalsRef.currentRoute = response.routes[0];
-              globalsRef.directionsDisplay.setDirections(response);
-              let point = response.routes[ 0 ].legs[ 0 ];
-              console.log( 'Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
+              this.currentRoute = response.routes[0];
+              this.directionsDisplay.setDirections(response);
           } else {
               console.log('Directions request failed due to ' + status);
           }
       });
   }
 
+  private waypointChangeListener() {
+    google.maps.event.addListener(
+        this.directionsDisplay,
+        'directions_changed',
+        () => {
+          console.log('waypt change listener');
+          this.currentRoute = this.directionsDisplay.directions.routes[0];
+          //call findcrags() if distance form field is populated
+          
+          // this.waypoints = [];
+
+          // let coords = [];
+          // let routeLeg = this.directionsDisplay.directions.routes[0].legs[0];
+          // let wp = routeLeg.via_waypoints;
+
+          // for(let i=0; i<wp.length; i++) {
+          //     coords[i] = [wp[i].lat(), wp[i].lng()];
+          // }
+
+          // for(let i=0; i<coords.length; i++) {
+          //     this.waypoints[i] = { 'location': new google.maps.LatLng(coords[i][0], coords[i][1]),
+          //                           'stopover': false };
+          // }
+        }
+    );
+  }
+
   findCrags(dist: number) {
-    this.clearBoxes();
+    // this.clearBoxes();
     this.clearMarkers();
 
     let distance = dist * 1.609344;

@@ -44,10 +44,10 @@ export class FindMapComponent implements OnInit {
 
     this.mapsAPILoader.load().then(() => {
       let mapConfig = {
-              center: new google.maps.LatLng(39.8282, -98.5795),
-              zoom: 4,
-              mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
+          center: new google.maps.LatLng(39.8282, -98.5795),
+          zoom: 4,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
       this.map = new google.maps.Map(document.getElementById("map-container"), mapConfig);
       this.directions.map = this.map;
 
@@ -80,32 +80,32 @@ export class FindMapComponent implements OnInit {
 
   private setupPlaceChangedListener(autocomplete: any, mode: any ) {
     autocomplete.addListener('place_changed', () => {
-        this.ngZone.run(() => {
-          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-          if (place.geometry === undefined) {
-            return;
-          }
+      this.ngZone.run(() => {
+        let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+        if (place.geometry === undefined) {
+          return;
+        }
 
-          if (mode === 'ORG') {
-            this.directions.origin = {
-              longitude: place.geometry.location.lng(),
-              latitude: place.geometry.location.lat()
-            };
-            this.directions.originPlaceId = place.place_id;
-          } else {
-            this.directions.destination = {
-              longitude: place.geometry.location.lng(),
-              latitude: place.geometry.location.lat()
-            };
-            this.directions.destinationPlaceId = place.place_id;
-          }
+        if (mode === 'ORG') {
+          this.directions.origin = {
+            longitude: place.geometry.location.lng(),
+            latitude: place.geometry.location.lat()
+          };
+          this.directions.originPlaceId = place.place_id;
+        } else {
+          this.directions.destination = {
+            longitude: place.geometry.location.lng(),
+            latitude: place.geometry.location.lat()
+          };
+          this.directions.destinationPlaceId = place.place_id;
+        }
 
-          this.setMapFocus(place.geometry.location.lat(), place.geometry.location.lng());
+        console.log('orig: ' + this.directions.originPlaceId);
+        console.log('dest: ' + this.directions.destinationPlaceId);
+        this.setMapFocus(place.geometry.location.lat(), place.geometry.location.lng());
 
-          this.directions.directionsDisplay = new google.maps.DirectionsRenderer;
-          this.directions.updateRoute();
-        });
-
+        this.directions.drawRoute();
       });
-    }
+    });
+  }
 }
