@@ -9,6 +9,7 @@ import { ShareButtonsModule } from 'ngx-sharebuttons';
 
 import { HeaderComponent } from './components/header/header.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { SocialComponent } from './components/social/social.component';
 import { FindMapComponent } from './components/findMap/findMap.component';
 import { AddMapComponent } from './components/addMap/addMap.component';
 import { RouteBoxerService } from './services/routeboxer/routeboxer.service';
@@ -28,8 +29,8 @@ import { LocationsService } from './services/locations/locations.service';
             ShareButtonsModule.forRoot(),
             BrowserModule, FormsModule,
             ReactiveFormsModule, HttpModule],
-  declarations: [NavbarComponent, HeaderComponent, AddMapComponent, FindMapComponent, DirectionsMapDirective],
-  exports: [NavbarComponent, HeaderComponent, AddMapComponent, FindMapComponent,
+  declarations: [NavbarComponent, SocialComponent, HeaderComponent, AddMapComponent, FindMapComponent, DirectionsMapDirective],
+  exports: [NavbarComponent, SocialComponent, HeaderComponent, AddMapComponent, FindMapComponent,
             CommonModule, FormsModule, RouterModule]
 })
 export class SharedModule {
