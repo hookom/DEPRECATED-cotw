@@ -7,9 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['social.component.css'],
 })
 export class SocialComponent implements OnInit {
-  ngOnInit() {
+  wasClicked = false;
+
+  onClick() {
+      this.wasClicked= !this.wasClicked;
+  }
+    
     $("#click").click(function(){
       $("#nav").toggleClass("closed");
     });
-  }
 }
