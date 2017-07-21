@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AgmCoreModule } from '@agm/core';
 import { HttpModule } from '@angular/http';
-import { ShareButtonsModule } from 'ngx-sharebuttons';
 
 import { HeaderComponent } from './components/header/header.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -26,7 +25,6 @@ import { LocationsService } from './services/locations/locations.service';
               apiKey: 'AIzaSyA-2Qvfc-Qj1sgX0Mpp4FKz8L86d5ycF5U',
               libraries: ['places']
             }),
-            ShareButtonsModule.forRoot(),
             BrowserModule, FormsModule,
             ReactiveFormsModule, HttpModule],
   declarations: [NavbarComponent, SocialComponent, HeaderComponent, AddMapComponent, FindMapComponent, DirectionsMapDirective],

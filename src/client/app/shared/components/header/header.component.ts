@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ShareButtonsModule } from 'ngx-sharebuttons';
 
 @Component({
   moduleId: module.id,

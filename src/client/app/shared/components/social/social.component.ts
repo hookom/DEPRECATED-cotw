@@ -7,13 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['social.component.css'],
 })
 export class SocialComponent {
-  closeClicked = false;
+  isClosed: boolean = true;
 
-  onClick() {
-      this.closeClicked= !this.closeClicked;
+  toggleClosed() {
+    this.isClosed= !this.isClosed;
   }
-    
-    // $("#click").click(function(){
-    //   $("#nav").toggleClass("closed");
-    // });
+
 }

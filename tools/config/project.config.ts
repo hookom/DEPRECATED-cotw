@@ -47,9 +47,6 @@ export class ProjectConfig extends SeedConfig {
       { name: '@agm/core',
         path: 'node_modules/@agm/core/core.umd.js'
       },
-      { name: 'ngx-sharebuttons',
-        path: 'node_modules/ngx-sharebuttons/bundles/ngx-sharebuttons.umd.js'
-      },
     ];
 
     this.addPackagesBundles(additionalPackages);
