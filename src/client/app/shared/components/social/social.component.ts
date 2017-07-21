@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   moduleId: module.id,
@@ -6,14 +6,14 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: 'social.component.html',
   styleUrls: ['social.component.css'],
 })
-export class SocialComponent implements OnInit {
-  wasClicked = false;
+export class SocialComponent {
+  closeClicked = false;
 
   onClick() {
-      this.wasClicked= !this.wasClicked;
+      this.closeClicked= !this.closeClicked;
   }
     
-    $("#click").click(function(){
-      $("#nav").toggleClass("closed");
-    });
+    // $("#click").click(function(){
+    //   $("#nav").toggleClass("closed");
+    // });
 }

@@ -1,20 +1,13 @@
-$radius: 15em;
+
 .circle {
   position: absolute;
-  /*top: -$radius;
-  left: -$radius;*/
   top: 0;
   left: 0;
-  width: $radius;
-  height: $radius;
+  width: 15em;
+  height: 15em;
   transition: width 0.3s, height 0.3s, transform 0.3s;
   transform-origin: top left;
   border-bottom-right-radius: 100%;
-  /*transition: top 0.3s, left 0.3s;
-  &:hover {
-    top: -1em;
-    left: -1em;
-  }*/
   .link {
     width: 100%;
     height: 100%;
@@ -33,8 +26,8 @@ $radius: 15em;
 .wrapcircles.closed{
   .circle {
     transform: rotate(90deg);
-    width: $radius / 3;
-    height: $radius / 3;
+    width: 15em / 3;
+    height: 15em / 3;
     transition-delay: 0s;
   }
   #click {
