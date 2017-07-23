@@ -11,6 +11,11 @@ export class ProjectConfig extends SeedConfig {
 
   PROJECT_TASKS_DIR = join(process.cwd(), this.TOOLS_DIR, 'tasks', 'project');
 
+  FONTS_DEST = `${this.APP_DEST}/fonts`;
+  FONTS_SRC = [
+      'node_modules/font-awesome/fonts/**'
+  ];
+
   constructor() {
     super();
     this.APP_TITLE = 'Climb on the Way';
@@ -24,12 +29,14 @@ export class ProjectConfig extends SeedConfig {
       ...this.NPM_DEPENDENCIES,
       // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
       // {src: 'lodash/lodash.min.js', inject: 'libs'},
+      { src: 'font-awesome/css/font-awesome.min.css', inject: true },
     ];
 
     // Add `local` third-party libraries to be injected/bundled.
     this.APP_ASSETS = [
       // {src: `${this.CSS_SRC}/path-to-lib/test-lib.css`, inject: true, vendor: false},
       // {src: `${this.APP_SRC}/assets/RouteBoxer.js`, inject: true, vendor: false},
+      // { src: 'font-awesome/css/font-awesome.css', inject: true }
     ];
 
     this.ROLLUP_INCLUDE_DIR = [
