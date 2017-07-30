@@ -1,8 +1,8 @@
-/* .form-group {
+#form-container {
     width: 90%;
     margin: auto;
     margin-bottom: 4px;
-} */
+} 
 
 #map-container {
     height: 400px;

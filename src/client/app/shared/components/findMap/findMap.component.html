@@ -1,32 +1,23 @@
-<cotw-form>
-  <cotw-form-step [title]="'Step1'" (onNext)="onStep1Next($event)">
-    <h1>Origin Step</h1>
-    <form [formGroup]="climbSearch">
-      <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #originSearch formControlName="originSearchControl">
-    </form>
-  </cotw-form-step>
-  <cotw-form-step [title]="'Step2'" (onNext)="onStep2Next($event)">
-    <h1>Destination Step</h1>
-    <form [formGroup]="climbSearch">
-      <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #destSearch formControlName="destSearchControl">
-    </form>
-  </cotw-form-step>
-  <cotw-form-step [title]="'Step3'" (onComplete)="onComplete($event)">
-    <h1>Distance Step</h1>
-    <form (ngSubmit)="onSubmit(climbSearch)" [formGroup]="climbSearch">
-      <input placeholder="distance out of way" type="number" class="form-control" formControlName="distanceControl">
-      <button class="formButton" type="submit" [disabled]="climbSearch.invalid">Find</button>
-    </form>
-  </cotw-form-step>
-</cotw-form>
-<!-- <div class="form-group">
-  <form (ngSubmit)="onSubmit(climbSearch)" [formGroup]="climbSearch">
-    <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #originSearch formControlName="originSearchControl">
-    <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #destSearch formControlName="destSearchControl">
-    <input placeholder="distance out of way" type="number" class="form-control" formControlName="distanceControl">
-    <button class="formButton" type="submit" [disabled]="climbSearch.invalid">Find</button>
-  </form>
-</div> -->
+<div id="form-container">
+  <cotw-form>
+    <cotw-form-step [title]="'Step1'" (onNext)="onStep1Next($event)">
+      <form [formGroup]="climbSearch">
+        <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="searchInput" #originSearch formControlName="originSearchControl">
+      </form>
+    </cotw-form-step>
+    <cotw-form-step [title]="'Step2'" (onNext)="onStep2Next($event)">
+      <form [formGroup]="climbSearch">
+        <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="searchInput" #destSearch formControlName="destSearchControl">
+      </form>
+    </cotw-form-step>
+    <cotw-form-step [title]="'Step3'" (onComplete)="onComplete($event)">
+      <form (ngSubmit)="onSubmit(climbSearch)" [formGroup]="climbSearch">
+        <input placeholder="distance out of way" type="number" formControlName="distanceControl">
+        <button class="formButton" type="submit" [disabled]="climbSearch.invalid">Find</button>
+      </form>
+    </cotw-form-step>
+  </cotw-form>
+</div>
 <div id="map-container">
   <sebm-google-map-directions [origin]="orig" [destination]="dest"></sebm-google-map-directions>
 </div>

@@ -2,29 +2,26 @@ import { Component, Output, EventEmitter, ContentChildren, QueryList, AfterConte
 import { FormStepComponent } from './form-step.component';
 
 @Component({
+  moduleId: module.id,
   selector: 'cotw-form',
   template:
-  `<div class="card">
-    <div class="card-block">
+  `<div class="stepForm">
+    <div class="backArrow" [hidden]="isCompleted">
+      <button type="button" (click)="previous()" [hidden]="!hasPrevStep || !activeStep.showPrev">
+        <i class="fa fa-caret-left fa-4x"></i>
+      </button>
+    </div>
+    <div class="steps">
       <ng-content></ng-content>
     </div>
-    <div class="card-footer" [hidden]="isCompleted">
-        <button type="button" class="btn btn-secondary float-left" (click)="previous()" [hidden]="!hasPrevStep || !activeStep.showPrev">Previous</button>
-        <button type="button" class="btn btn-secondary float-right" (click)="next()" [disabled]="!activeStep.isValid" [hidden]="!hasNextStep || !activeStep.showNext">Next</button>
+    <div class="nextArrow" [hidden]="isCompleted">
+      <button type="button" (click)="next()" [disabled]="!activeStep.isValid" [hidden]="!hasNextStep || !activeStep.showNext">
+        <i class="fa fa-caret-right fa-4x"></i>
+      </button>
     </div>
   </div>`
   ,
-  styles: [
-    '.card { height: 100%; }',
-    '.card-header { padding: 0; font-size: 1.25rem; }',
-    '.card-block { overflow-y: auto; }',
-    '.card-footer { border-top: 0 none; }',
-    '.nav-item { padding: 1rem 0rem; border-bottom: 0.5rem solid #ccc; }',
-    '.active { font-weight: bold; color: black; border-bottom-color: #1976D2 !important; }',
-    '.enabled { cursor: pointer; border-bottom-color: rgb(88, 162, 234); }',
-    '.disabled { color: #ccc; }',
-    '.completed { cursor: default; }'
-  ]
+  styleUrls: ['form.component.css']
 })
 export class FormComponent implements AfterContentInit {
   @ContentChildren(FormStepComponent)

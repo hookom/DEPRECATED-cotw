@@ -1,11 +1,11 @@
 <div class="form-group">
   <form (ngSubmit)="onSubmit(climbUpload)" [formGroup]="climbUpload">
-    <input placeholder="nearby location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control searchInput" #nearbySearch formControlName="nearbySearchControl">
-    <input placeholder="crag name" type="text" class="form-control" formControlName="cragNameControl">
-    <input placeholder="latitude" type="number" class="form-control" formControlName="latControl">
-    <input placeholder="longitude" type="number" class="form-control" formControlName="longControl">
-    <input placeholder="your name" type="text" class="form-control" formControlName="userNameControl">
-    <input placeholder="your location" type="text" class="form-control" formControlName="userLocationControl">
+    <input placeholder="nearby location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="searchInput" #nearbySearch formControlName="nearbySearchControl">
+    <input placeholder="crag name" type="text" formControlName="cragNameControl">
+    <input placeholder="latitude" type="number" formControlName="latControl">
+    <input placeholder="longitude" type="number" formControlName="longControl">
+    <input placeholder="your name" type="text" formControlName="userNameControl">
+    <input placeholder="your location" type="text" formControlName="userLocationControl">
     <button class="formButton" type="submit" [disabled]="climbUpload.invalid">Add</button>
   </form>
 </div>
