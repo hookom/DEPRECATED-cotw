@@ -5,6 +5,8 @@ import { MapsAPILoader, AgmCoreModule } from '@agm/core';
 import { } from '@types/googlemaps';
 
 import { DirectionsMapDirective } from '../../directives/directions.directive';
+import { FormComponent } from '../form/form.component';
+import { FormStepComponent } from '../form/form-step.component';
 
 @Component({
     moduleId: module.id,

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'wizard-step',
+  selector: 'cotw-form-step',
   template:
   `
     <div [hidden]="!isActive">

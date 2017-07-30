@@ -14,6 +14,8 @@ import { AddMapComponent } from './components/addMap/addMap.component';
 import { RouteBoxerService } from './services/routeboxer/routeboxer.service';
 import { DirectionsMapDirective } from './directives/directions.directive';
 import { LocationsService } from './services/locations/locations.service';
+import { FormComponent } from './components/form/form.component';
+import { FormStepComponent } from './components/form/form-step.component';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -27,9 +29,15 @@ import { LocationsService } from './services/locations/locations.service';
             }),
             BrowserModule, FormsModule,
             ReactiveFormsModule, HttpModule],
-  declarations: [NavbarComponent, SocialComponent, HeaderComponent, AddMapComponent, FindMapComponent, DirectionsMapDirective],
-  exports: [NavbarComponent, SocialComponent, HeaderComponent, AddMapComponent, FindMapComponent,
-            CommonModule, FormsModule, RouterModule]
+  declarations: [NavbarComponent, SocialComponent,
+                 HeaderComponent, AddMapComponent,
+                 FindMapComponent, DirectionsMapDirective,
+                 FormComponent, FormStepComponent],
+  exports: [NavbarComponent, SocialComponent,
+            HeaderComponent, AddMapComponent,
+            FindMapComponent, CommonModule,
+            FormsModule, RouterModule,
+            FormComponent, FormStepComponent]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {
