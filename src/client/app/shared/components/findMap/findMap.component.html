@@ -1,18 +1,18 @@
 <div id="form-container">
   <cotw-form>
-    <cotw-form-step [title]="'Step1'" (onNext)="onStep1Next($event)">
+    <cotw-form-step>
       <form [formGroup]="climbSearch">
         <input placeholder="starting location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="searchInput" #originSearch formControlName="originSearchControl">
       </form>
     </cotw-form-step>
-    <cotw-form-step [title]="'Step2'" (onNext)="onStep2Next($event)">
+    <cotw-form-step>
       <form [formGroup]="climbSearch">
         <input placeholder="destination" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="searchInput" #destSearch formControlName="destSearchControl">
       </form>
     </cotw-form-step>
-    <cotw-form-step [title]="'Step3'" (onComplete)="onComplete($event)">
+    <cotw-form-step>
       <form (ngSubmit)="onSubmit(climbSearch)" [formGroup]="climbSearch">
-        <input placeholder="distance out of way" type="number" formControlName="distanceControl">
+        <input placeholder="detour distance" type="number" class="numericInput detour" formControlName="distanceControl">
         <button class="formButton" type="submit" [disabled]="climbSearch.invalid">Find</button>
       </form>
     </cotw-form-step>

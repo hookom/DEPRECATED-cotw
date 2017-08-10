@@ -23,7 +23,11 @@ input {
   font-size: 14px;
   height: 30px;
   outline: none;
-  padding: 8px;
+  padding: 7px;
+}
+
+.numericInput {
+  text-align: center;
 }
 
 button.formButton {

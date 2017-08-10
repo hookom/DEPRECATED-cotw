@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 import { FormStepComponent } from './form-step.component';
 
 @Component({
@@ -6,19 +6,15 @@ import { FormStepComponent } from './form-step.component';
   selector: 'cotw-form',
   template:
   `<div class="stepForm">
-    <div class="backArrow" [hidden]="isCompleted">
-      <button type="button" (click)="previous()" [hidden]="!hasPrevStep || !activeStep.showPrev">
-        <i class="fa fa-caret-left fa-4x"></i>
-      </button>
-    </div>
+    <button type="button" (click)="previous()" [ngClass]="{'hidden-btn': !hasPrevStep}">
+      <i class="fa fa-caret-left fa-4x"></i>
+    </button>
     <div class="steps">
       <ng-content></ng-content>
     </div>
-    <div class="nextArrow" [hidden]="isCompleted">
-      <button type="button" (click)="next()" [disabled]="!activeStep.isValid" [hidden]="!hasNextStep || !activeStep.showNext">
-        <i class="fa fa-caret-right fa-4x"></i>
-      </button>
-    </div>
+    <button type="button" (click)="next()" [disabled]="!activeStep.isValid" [ngClass]="{'hidden-btn': !hasNextStep}">
+      <i class="fa fa-caret-right fa-4x"></i>
+    </button>
   </div>`
   ,
   styleUrls: ['form.component.css']
@@ -28,10 +24,6 @@ export class FormComponent implements AfterContentInit {
   wizardSteps: QueryList<FormStepComponent>;
 
   private _steps: Array<FormStepComponent> = [];
-  private _isCompleted: boolean = false;
-
-  @Output()
-  onStepChanged: EventEmitter<FormStepComponent> = new EventEmitter<FormStepComponent>();
 
   constructor() { }
 
@@ -44,10 +36,6 @@ export class FormComponent implements AfterContentInit {
     return this._steps.filter(step => !step.hidden);
   }
 
-  get isCompleted(): boolean {
-    return this._isCompleted;
-  }
-
   get activeStep(): FormStepComponent {
     return this.steps.find(step => step.isActive);
   }
@@ -56,7 +44,6 @@ export class FormComponent implements AfterContentInit {
     if (step !== this.activeStep && !step.isDisabled) {
       this.activeStep.isActive = false;
       step.isActive = true;
-      this.onStepChanged.emit(step);
     }
   }
 
@@ -72,16 +59,9 @@ export class FormComponent implements AfterContentInit {
     return this.activeStepIndex > 0;
   }
 
-  public goToStep(step: FormStepComponent): void {
-    if (!this.isCompleted) {
-      this.activeStep = step;
-    }
-  }
-
   public next(): void {
     if (this.hasNextStep) {
       let nextStep: FormStepComponent = this.steps[this.activeStepIndex + 1];
-      this.activeStep.onNext.emit();
       nextStep.isDisabled = false;
       this.activeStep = nextStep;
     }
@@ -90,15 +70,9 @@ export class FormComponent implements AfterContentInit {
   public previous(): void {
     if (this.hasPrevStep) {
       let prevStep: FormStepComponent = this.steps[this.activeStepIndex - 1];
-      this.activeStep.onPrev.emit();
       prevStep.isDisabled = false;
       this.activeStep = prevStep;
     }
-  }
-
-  public complete(): void {
-    this.activeStep.onComplete.emit();
-    this._isCompleted = true;
   }
 
 }
