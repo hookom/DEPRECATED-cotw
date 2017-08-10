@@ -3,6 +3,21 @@
   margin: 0;
   box-sizing: border-box;
 }
+.circle-offscreen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 15em;
+  height: 15em;
+  -webkit-transition: width 0.3s, height 0.3s, -webkit-transform 0.3s;
+  transition: width 0.3s, height 0.3s, -webkit-transform 0.3s;
+  transition: width 0.3s, height 0.3s, transform 0.3s;
+  transition: width 0.3s, height 0.3s, transform 0.3s, -webkit-transform 0.3s;
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+  border-bottom-left-radius: 100%;
+  overflow: hidden;
+}
 .circle {
   position: absolute;
   top: 0;
