@@ -12,7 +12,7 @@ import { FormStepComponent } from './form-step.component';
     <div class="steps">
       <ng-content></ng-content>
     </div>
-    <button type="button" (click)="next()" [disabled]="!activeStep.isValid" [ngClass]="{'hidden-btn': !hasNextStep}">
+    <button type="button" (click)="next()" [ngClass]="{'hidden-btn': !hasNextStep}">
       <i class="fa fa-caret-right fa-4x"></i>
     </button>
   </div>`

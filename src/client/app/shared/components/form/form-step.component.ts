@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ContentChildren, QueryList } from '@angular/core';
 
 @Component({
   selector: 'cotw-form-step',
@@ -11,12 +11,16 @@ import { Component, Input } from '@angular/core';
 })
 export class FormStepComponent {
   @Input() hidden: boolean = false;
-  @Input() isValid: boolean = true;
+  @ContentChildren('form') forms: QueryList<Element>;
 
   private _isActive: boolean = false;
   isDisabled: boolean = true;
 
   constructor() { }
+
+  ngAfterContentInit() {
+    console.log(this.forms);
+  }
 
   @Input('isActive')
   set isActive(isActive: boolean) {
