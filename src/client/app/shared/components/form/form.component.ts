@@ -9,9 +9,7 @@ import { FormStepComponent } from './form-step.component';
     <button type="button" (click)="previous()" [ngClass]="{'hidden-btn': !hasPrevStep}">
       <i class="fa fa-caret-left fa-4x"></i>
     </button>
-    <div class="steps">
-      <ng-content></ng-content>
-    </div>
+    <ng-content></ng-content>
     <button type="button" (click)="next()" [ngClass]="{'hidden-btn': !hasNextStep}">
       <i class="fa fa-caret-right fa-4x"></i>
     </button>
@@ -21,57 +19,44 @@ import { FormStepComponent } from './form-step.component';
 })
 export class FormComponent implements AfterContentInit {
   @ContentChildren(FormStepComponent)
-  wizardSteps: QueryList<FormStepComponent>;
+  formSteps: QueryList<FormStepComponent>;
 
   private _steps: Array<FormStepComponent> = [];
+  private _activeStep: FormStepComponent;
+  private _activeIndex: number;
 
   constructor() { }
 
   ngAfterContentInit() {
-    this.wizardSteps.forEach(step => this._steps.push(step));
-    this.steps[0].isActive = true;
-  }
-
-  get steps(): Array<FormStepComponent> {
-    return this._steps.filter(step => !step.hidden);
-  }
-
-  get activeStep(): FormStepComponent {
-    return this.steps.find(step => step.isActive);
-  }
-
-  set activeStep(step: FormStepComponent) {
-    if (step !== this.activeStep && !step.isDisabled) {
-      this.activeStep.isActive = false;
-      step.isActive = true;
-    }
-  }
-
-  public get activeStepIndex(): number {
-    return this.steps.indexOf(this.activeStep);
+    this.formSteps.forEach(step => this._steps.push(step));
+    this._activeStep = this._steps[0];
+    this._activeStep.isActive = true;
+    this._activeIndex = 0;
   }
 
   get hasNextStep(): boolean {
-    return this.activeStepIndex < this.steps.length - 1;
+    return this._activeIndex < this._steps.length - 1;
   }
 
   get hasPrevStep(): boolean {
-    return this.activeStepIndex > 0;
+    return this._activeIndex > 0;
   }
 
   public next(): void {
     if (this.hasNextStep) {
-      let nextStep: FormStepComponent = this.steps[this.activeStepIndex + 1];
-      nextStep.isDisabled = false;
-      this.activeStep = nextStep;
+      this._activeStep.isActive = false;
+      this._activeIndex += 1;
+      this._activeStep = this._steps[this._activeIndex];
+      this._activeStep.isActive = true;
     }
   }
 
   public previous(): void {
     if (this.hasPrevStep) {
-      let prevStep: FormStepComponent = this.steps[this.activeStepIndex - 1];
-      prevStep.isDisabled = false;
-      this.activeStep = prevStep;
+      this._activeStep.isActive = false;
+      this._activeIndex -= 1;
+      this._activeStep = this._steps[this._activeIndex];
+      this._activeStep.isActive = true;
     }
   }
 

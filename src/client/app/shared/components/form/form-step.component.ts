@@ -10,22 +10,18 @@ import { Component, Input, ContentChildren, QueryList } from '@angular/core';
   `
 })
 export class FormStepComponent {
-  @Input() hidden: boolean = false;
-  @ContentChildren('form') forms: QueryList<Element>;
+  @ContentChildren('childForm') form: any;
 
   private _isActive: boolean = false;
-  isDisabled: boolean = true;
 
   constructor() { }
 
   ngAfterContentInit() {
-    console.log(this.forms);
+    console.log(this.form.first.nativeElement);
   }
 
-  @Input('isActive')
-  set isActive(isActive: boolean) {
-    this._isActive = isActive;
-    this.isDisabled = false;
+  set isActive(val: boolean) {
+    this._isActive = val;
   }
 
   get isActive(): boolean {
