@@ -6,6 +6,8 @@ import { } from '@types/googlemaps';
 
 import { LocationsService } from '../../services/locations/locations.service';
 import { Location } from '../../models/location';
+import { FormComponent } from '../form/form.component';
+import { FormStepComponent } from '../form/form-step.component';
 
 @Component({
     moduleId: module.id,

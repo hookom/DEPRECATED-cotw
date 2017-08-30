@@ -17,7 +17,8 @@ export class FormStepComponent {
   constructor() { }
 
   ngAfterContentInit() {
-    console.log(this.form.first.nativeElement);
+    // this breaks form on add page
+    // console.log(this.form.first.nativeElement);
   }
 
   set isActive(val: boolean) {
