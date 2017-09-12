@@ -10,15 +10,14 @@ import { Component, Input, ContentChildren, QueryList } from '@angular/core';
   `
 })
 export class FormStepComponent {
-  @ContentChildren('childForm') form: any;
+  @Input() isValid: boolean = false;
 
   private _isActive: boolean = false;
 
   constructor() { }
 
   ngAfterContentInit() {
-    // this breaks form on add page
-    // console.log(this.form.first.nativeElement);
+    
   }
 
   set isActive(val: boolean) {

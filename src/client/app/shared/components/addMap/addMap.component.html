@@ -1,16 +1,16 @@
 <div id="form-container">
   <cotw-form>
-    <cotw-form-step>
+    <cotw-form-step [isValid]="climbUpload.controls.nearbySearchControl.valid">
       <form [formGroup]="climbUpload">
         <input placeholder="nearby location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="searchInput" #nearbySearch formControlName="nearbySearchControl">
       </form>
     </cotw-form-step>
-    <cotw-form-step>
+    <cotw-form-step [isValid]="climbUpload.controls.cragNameControl.valid">
       <form [formGroup]="climbUpload">
         <input placeholder="crag name" type="text" formControlName="cragNameControl">
       </form>
     </cotw-form-step>
-    <cotw-form-step>
+    <cotw-form-step [isValid]="climbUpload.controls.latControl.valid && climbUpload.controls.longControl.valid">
       <form [formGroup]="climbUpload">
         <input placeholder="latitude" type="number" class="numericInput lat" formControlName="latControl">
         <input placeholder="longitude" type="number" class="numericInput long" formControlName="longControl">
