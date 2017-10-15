@@ -1,21 +1,25 @@
 const findPage = require('../pageObjects/find.page.js');
 
 describe('Find Page Tests - ', function() {
-	it('should open social menu wheel', function() {
-
+	it('should open and close social menu', function() {
 		findPage.navigateTo();
+
 		findPage.toggleSocialMenu()
 			.then(() => {
-				findPage.socialMenuIsLoaded()
-					.then((loaded) => {
-						console.log('asserting on: ' + loaded);
-						expect(loaded).toEqual(true);
-					}, (rejectReason) => {
-						console.log('promise rejection')
-						console.log(rejectReason);
+				findPage.socialMenuIsOpen()
+					.then(open => {
+						expect(open).toEqual(true);
 					});
 			});
 		
-		browser.sleep(2000);
+		browser.sleep(500);
+
+		findPage.toggleSocialMenu()
+			.then(() => {
+				findPage.socialMenuIsClosed()
+					.then(closed => {
+						expect(closed).toEqual(true);
+					});
+			});
 	});
 });
