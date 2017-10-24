@@ -8,6 +8,7 @@ exports.config = {
         chromeOptions: {
             args: [
                 '--start-maximized'
+                // '--headless'
             ]
         }
     }

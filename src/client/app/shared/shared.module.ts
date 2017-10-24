@@ -7,15 +7,16 @@ import { AgmCoreModule } from '@agm/core';
 import { HttpModule } from '@angular/http';
 
 import { HeaderComponent } from './components/header/header.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { SocialComponent } from './components/social/social.component';
 import { FindMapComponent } from './components/findMap/findMap.component';
 import { AddMapComponent } from './components/addMap/addMap.component';
-import { RouteBoxerService } from './services/routeboxer/routeboxer.service';
-import { DirectionsMapDirective } from './directives/directions.directive';
-import { LocationsService } from './services/locations/locations.service';
 import { FormComponent } from './components/form/form.component';
 import { FormStepComponent } from './components/form/form-step.component';
+
+import { DirectionsMapDirective } from './directives/directions.directive';
+
+import { RouteBoxerService } from './services/routeboxer/routeboxer.service';
+import { LocationsService } from './services/locations/locations.service';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -29,11 +30,11 @@ import { FormStepComponent } from './components/form/form-step.component';
             }),
             BrowserModule, FormsModule,
             ReactiveFormsModule, HttpModule],
-  declarations: [NavbarComponent, SocialComponent,
+  declarations: [SocialComponent,
                  HeaderComponent, AddMapComponent,
                  FindMapComponent, DirectionsMapDirective,
                  FormComponent, FormStepComponent],
-  exports: [NavbarComponent, SocialComponent,
+  exports: [SocialComponent,
             HeaderComponent, AddMapComponent,
             FindMapComponent, CommonModule,
             FormsModule, RouterModule,

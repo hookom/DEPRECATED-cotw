@@ -1,4 +1,8 @@
 <div class="header">
-      <img class="title">
+      <nav>
+            <a [routerLink]="['/']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">FIND</a>
+            <a [routerLink]="['/add']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">ADD</a>
+      </nav>
+      <!-- <img class="title"> -->
       <cotw-social></cotw-social> 
 </div>

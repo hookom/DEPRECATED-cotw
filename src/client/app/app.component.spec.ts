@@ -15,9 +15,7 @@ import {
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { AddComponent } from './add/add.component';
-import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { SocialComponent } from './shared/components/social/social.component';
-import { MapComponent } from './shared/components/map/map.component';
 
 export function main() {
 
@@ -31,8 +29,7 @@ export function main() {
       TestBed.configureTestingModule({
         imports: [FormsModule, RouterTestingModule.withRoutes(config)],
         declarations: [TestComponent,
-          NavbarComponent, AppComponent,
-          MapComponent,
+          AppComponent,
           HomeComponent, AddComponent],
         providers: [
           { provide: APP_BASE_HREF, useValue: '/' }
