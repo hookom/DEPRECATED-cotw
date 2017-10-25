@@ -43,7 +43,7 @@
     "@types/gulp-filter": "^3.0.29",
     "@types/gulp-load-plugins": "^0.0.28",
     "@types/gulp-sass": "^0.0.29",
-    "@types/gulp-util": "^3.0.29",
+    "@types/gulp-util": "3.0.31",
     "@types/jasmine": "2.5.41",
     "@types/node": "^6.0.45",
     "@types/rimraf": "0.0.28",
