@@ -119,6 +119,7 @@
           transition-delay: 0.1s, 0.1s, 0.1s;
   -webkit-transform: rotate(-18deg);
           transform: rotate(-18deg);
+  opacity: 0.5
 }
 .c-1 .link::before {
   -webkit-transform: rotate(18deg);
@@ -133,6 +134,7 @@
           transition-delay: 0.2s, 0.2s, 0.2s;
   -webkit-transform: rotate(-36deg);
           transform: rotate(-36deg);
+  opacity: 0.5
 }
 .c-2 .link::before {
   -webkit-transform: rotate(36deg);
@@ -147,6 +149,7 @@
   background: #2E7D32;
   -webkit-transform: rotate(-54deg);
           transform: rotate(-54deg);
+  opacity: 0.5
 }
 .c-3 .link::before {
   -webkit-transform: rotate(54deg);
@@ -161,6 +164,7 @@
   background: #1B5E20;
   -webkit-transform: rotate(-72deg);
           transform: rotate(-72deg);
+  opacity: 0.5
 }
 .c-4 .link::before {
   -webkit-transform: rotate(72deg);
@@ -170,5 +174,5 @@
 
 .c-5 {
   background: #4CAF50;
-  /* opacity: 0.5 */
+  opacity: 0.5
 }
